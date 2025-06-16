@@ -19,7 +19,8 @@ public class OpenApiConfig {
                         .description("API documentation for DNA Testing Service Management System")
                         .contact(new Contact()
                                 .name("DNA Testing Service")
-                                .email("contact@dnatesting.com"))
+                                .email("contact@dnatesting.com")
+                                .url("https://dnatesting.com"))
                         .license(new License()
                                 .name("Apache 2.0")
                                 .url("http://www.apache.org/licenses/LICENSE-2.0.html")));
