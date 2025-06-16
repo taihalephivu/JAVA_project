@@ -23,6 +23,7 @@ public interface TestService {
     List<Test> getTestsByUserIdAndStatus(Long userId, TestStatus status);
     List<Test> getTestsByDateRange(LocalDateTime startDate, LocalDateTime endDate);
     Page<Test> getTestsByUserId(Long userId, Pageable pageable);
+    List<Test> getTestsByUserIdAndPaymentStatus(Long userId, PaymentStatus status);
     boolean existsBySampleCode(String sampleCode);
     Test updateTestStatus(Long id, TestStatus status);
     Test updatePaymentStatus(Long id, PaymentStatus status);

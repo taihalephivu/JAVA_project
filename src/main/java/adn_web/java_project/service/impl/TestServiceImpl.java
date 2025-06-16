@@ -141,4 +141,9 @@ public class TestServiceImpl implements TestService {
         test.setPaymentStatus(status);
         return testRepository.save(test);
     }
+
+    @Override
+    public List<Test> getTestsByUserIdAndPaymentStatus(Long userId, PaymentStatus status) {
+        return testRepository.findByUserIdAndPaymentStatus(userId, status);
+    }
 } 

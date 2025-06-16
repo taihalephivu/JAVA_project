@@ -23,4 +23,5 @@ public interface TestRepository extends JpaRepository<Test, Long> {
     List<Test> findBySampleCollectionDateBetween(LocalDateTime startDate, LocalDateTime endDate);
     Page<Test> findByUserId(Long userId, Pageable pageable);
     boolean existsBySampleCode(String sampleCode);
+    List<Test> findByUserIdAndPaymentStatus(Long userId, PaymentStatus status);
 } 
