@@ -14,17 +14,13 @@ import {
   Paper,
 } from '@mui/material';
 import { setCredentials } from '../../features/auth/authSlice';
+import { LoginRequest } from '../../types';
 import api from '../../services/api';
 
 const schema = yup.object().shape({
   username: yup.string().required('Username is required'),
   password: yup.string().required('Password is required'),
 });
-
-type LoginFormInputs = {
-  username: string;
-  password: string;
-};
 
 const Login = () => {
   const navigate = useNavigate();
@@ -33,11 +29,11 @@ const Login = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginFormInputs>({
+  } = useForm<LoginRequest>({
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = async (data: LoginFormInputs) => {
+  const onSubmit = async (data: LoginRequest) => {
     try {
       const response = await api.post('/api/auth/login', data);
       const { user, token } = response.data;
