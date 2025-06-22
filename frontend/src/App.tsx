@@ -6,17 +6,20 @@ import { Provider } from 'react-redux';
 import { store } from './store';
 import theme from './styles/theme';
 import AppRoutes from './routes';
+import ErrorBoundary from './components/common/ErrorBoundary';
 
 function App() {
   return (
-    <Provider store={store}>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <Router>
-          <AppRoutes />
-        </Router>
-      </ThemeProvider>
-    </Provider>
+    <ErrorBoundary>
+      <Provider store={store}>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <Router>
+            <AppRoutes />
+          </Router>
+        </ThemeProvider>
+      </Provider>
+    </ErrorBoundary>
   );
 }
 

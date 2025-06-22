@@ -1,19 +1,19 @@
 import React from 'react';
 import { Container, Typography, Box } from '@mui/material';
 
-const AppointmentList = () => {
+const CustomerTestDetail = () => {
   return (
     <Container>
       <Box sx={{ mt: 4 }}>
         <Typography variant="h4" component="h1" gutterBottom>
-          Appointment List
+          Chi tiết xét nghiệm
         </Typography>
         <Typography variant="body1">
-          List of all appointments will be displayed here.
+          Thông tin chi tiết về xét nghiệm ADN.
         </Typography>
       </Box>
     </Container>
   );
 };
 
-export default AppointmentList; 
+export default CustomerTestDetail; 

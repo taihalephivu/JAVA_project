@@ -1,19 +1,19 @@
 import React from 'react';
 import { Container, Typography, Box } from '@mui/material';
 
-const TestDetail = () => {
+const AdminUsers = () => {
   return (
     <Container>
       <Box sx={{ mt: 4 }}>
         <Typography variant="h4" component="h1" gutterBottom>
-          Test Detail
+          Quản lý người dùng
         </Typography>
         <Typography variant="body1">
-          Test details will be displayed here.
+          Quản lý danh sách người dùng và phân quyền.
         </Typography>
       </Box>
     </Container>
   );
 };
 
-export default TestDetail; 
+export default AdminUsers; 

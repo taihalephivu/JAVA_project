@@ -1,19 +1,19 @@
 import React from 'react';
 import { Container, Typography, Box } from '@mui/material';
 
-const Profile = () => {
+const CustomerAppointments = () => {
   return (
     <Container>
       <Box sx={{ mt: 4 }}>
         <Typography variant="h4" component="h1" gutterBottom>
-          Profile
+          Lịch hẹn
         </Typography>
         <Typography variant="body1">
-          User profile information will be displayed here.
+          Quản lý lịch hẹn thu mẫu xét nghiệm.
         </Typography>
       </Box>
     </Container>
   );
 };
 
-export default Profile; 
+export default CustomerAppointments; 
