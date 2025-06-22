@@ -29,4 +29,5 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     long countByUserId(Long userId);
     long countByUserIdAndAppointmentDateBetween(Long userId, LocalDateTime start, LocalDateTime end);
     List<Appointment> findTop5ByUserIdAndAppointmentDateAfterOrderByAppointmentDateAsc(Long userId, LocalDateTime now);
+    Page<Appointment> findByUser_Username(String username, Pageable pageable);
 } 

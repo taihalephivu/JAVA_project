@@ -19,6 +19,7 @@ const CustomerTestDetail = React.lazy(() => import('../pages/customer/TestDetail
 const CustomerAppointments = React.lazy(() => import('../pages/customer/Appointments'));
 const CustomerAppointmentDetail = React.lazy(() => import('../pages/customer/AppointmentDetail'));
 const CustomerProfile = React.lazy(() => import('../pages/customer/Profile'));
+const CustomerBookTest = React.lazy(() => import('../pages/customer/BookAppointment'));
 
 // Admin pages
 const AdminDashboard = React.lazy(() => import('../pages/admin/Dashboard'));
@@ -67,6 +68,16 @@ const AppRoutes = () => {
             <ProtectedRoute requiredRoles={['ROLE_CUSTOMER', 'ROLE_STAFF', 'ROLE_MANAGER', 'ROLE_ADMIN']}>
               <MainLayout>
                 {user?.role === 'ROLE_CUSTOMER' ? <CustomerTestDetail /> : <AdminTests />}
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/tests/new"
+          element={
+            <ProtectedRoute requiredRoles={['ROLE_CUSTOMER']}>
+              <MainLayout>
+                <CustomerBookTest />
               </MainLayout>
             </ProtectedRoute>
           }

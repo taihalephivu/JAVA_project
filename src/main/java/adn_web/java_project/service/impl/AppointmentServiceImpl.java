@@ -119,4 +119,10 @@ public class AppointmentServiceImpl implements AppointmentService {
         appointment.setStatus(status);
         return appointmentRepository.save(appointment);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<Appointment> getAppointmentsByUsername(String username, Pageable pageable) {
+        return appointmentRepository.findByUser_Username(username, pageable);
+    }
 } 
