@@ -27,4 +27,5 @@ public interface TestService {
     boolean existsBySampleCode(String sampleCode);
     Test updateTestStatus(Long id, TestStatus status);
     Test updatePaymentStatus(Long id, PaymentStatus status);
+    Page<Test> getTestsByUsername(String username, Pageable pageable);
 } 

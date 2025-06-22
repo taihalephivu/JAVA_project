@@ -146,4 +146,10 @@ public class TestServiceImpl implements TestService {
     public List<Test> getTestsByUserIdAndPaymentStatus(Long userId, PaymentStatus status) {
         return testRepository.findByUserIdAndPaymentStatus(userId, status);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<Test> getTestsByUsername(String username, Pageable pageable) {
+        return testRepository.findByUser_Username(username, pageable);
+    }
 } 

@@ -67,21 +67,46 @@ const MainLayout = ({ children }: MainLayoutProps) => {
     handleProfileMenuClose();
   };
 
-  const menuItems = [
-    { text: 'Dashboard', icon: <Dashboard />, path: '/dashboard' },
-    { text: 'Tests', icon: <Science />, path: '/tests' },
-    { text: 'Appointments', icon: <Schedule />, path: '/appointments' },
-    { text: 'Profile', icon: <Person />, path: '/profile' },
-  ];
+  const getMenuItems = (role?: string) => {
+    const customerItems = [
+      { text: 'Dashboard', icon: <Dashboard />, path: '/dashboard' },
+      { text: 'My Tests', icon: <Science />, path: '/tests' },
+      { text: 'My Appointments', icon: <Schedule />, path: '/appointments' },
+      { text: 'Profile', icon: <Person />, path: '/profile' },
+    ];
 
-  // Add admin menu items if user is admin
-  if (user?.role === 'ROLE_ADMIN' || user?.role === 'ROLE_MANAGER') {
-    menuItems.push(
-      { text: 'Users', icon: <Person />, path: '/admin/users' },
-      { text: 'Test Types', icon: <Science />, path: '/admin/test-types' },
-      { text: 'Reports', icon: <Assessment />, path: '/admin/reports' }
-    );
-  }
+    const staffItems = [
+      { text: 'Dashboard', icon: <Dashboard />, path: '/dashboard' },
+      { text: 'Manage Tests', icon: <Science />, path: '/tests' },
+      { text: 'Manage Appointments', icon: <Schedule />, path: '/appointments' },
+    ];
+
+    const managerItems = [
+      ...staffItems,
+      { text: 'Manage Test Types', icon: <Science />, path: '/admin/test-types' },
+      { text: 'Reports', icon: <Assessment />, path: '/admin/reports' },
+    ];
+
+    const adminItems = [
+      ...managerItems,
+      { text: 'Manage Users', icon: <Person />, path: '/admin/users' },
+    ];
+
+    switch (role) {
+      case 'ROLE_ADMIN':
+        return adminItems;
+      case 'ROLE_MANAGER':
+        return managerItems;
+      case 'ROLE_STAFF':
+        return staffItems;
+      case 'ROLE_CUSTOMER':
+        return customerItems;
+      default:
+        return [];
+    }
+  };
+
+  const menuItems = getMenuItems(user?.role);
 
   const drawer = (
     <div>

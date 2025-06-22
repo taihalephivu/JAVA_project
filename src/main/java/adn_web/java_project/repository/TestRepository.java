@@ -36,4 +36,6 @@ public interface TestRepository extends JpaRepository<Test, Long> {
     BigDecimal calculateTotalSpentByUserId(@Param("userId") Long userId);
 
     List<Test> findTop5ByUserIdOrderByCreatedAtDesc(Long userId);
+
+    Page<Test> findByUser_Username(String username, Pageable pageable);
 } 

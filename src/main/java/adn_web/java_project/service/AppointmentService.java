@@ -15,6 +15,7 @@ public interface AppointmentService {
     void deleteAppointment(Long id);
     Optional<Appointment> getAppointmentById(Long id);
     List<Appointment> getAppointmentsByUserId(Long userId);
+    Page<Appointment> getAppointmentsByUsername(String username, Pageable pageable);
     List<Appointment> getAppointmentsByTestTypeId(Long testTypeId);
     List<Appointment> getAppointmentsByStatus(AppointmentStatus status);
     List<Appointment> getAppointmentsByUserIdAndStatus(Long userId, AppointmentStatus status);
