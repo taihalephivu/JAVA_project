@@ -10,11 +10,9 @@ interface MainLayoutProps {
 }
 
 const MainLayout: React.FC<MainLayoutProps> = ({ user, onLogout, children }) => (
-  <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: '#f7f9fb' }}>
+  <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
     <Header user={user} onLogout={onLogout} />
-    <main style={{ flex: 1, padding: '32px 0', maxWidth: 1000, margin: '0 auto', width: '100%' }}>
-      {children}
-    </main>
+    <main style={{ flex: 1, padding: '32px 0', background: '#f9f9f9' }}>{children}</main>
     <Footer />
   </div>
 );

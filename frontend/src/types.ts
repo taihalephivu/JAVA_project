@@ -1,4 +1,4 @@
-export type Role = 'ROLE_CUSTOMER' | 'ROLE_ADMIN';
+export type Role = 'ROLE_ADMIN' | 'ROLE_CUSTOMER' | 'ROLE_STAFF' | 'ROLE_MANAGER';
 
 export interface User {
   id: number;
@@ -7,19 +7,8 @@ export interface User {
   fullName: string;
   phoneNumber?: string;
   role: Role;
-}
-
-export type TestStatus = 'PENDING' | 'SAMPLE_COLLECTED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED' | 'FAILED';
-export type AppointmentStatus = 'SCHEDULED' | 'CONFIRMED' | 'COMPLETED' | 'CANCELLED' | 'NO_SHOW';
-
-export interface Test {
-  id: number;
-  testTypeName: string;
-  user: User;
-  sampleCode: string;
-  status: TestStatus;
   createdAt: string;
-  resultData?: string;
+  updatedAt: string;
 }
 
 export interface Appointment {
@@ -27,7 +16,32 @@ export interface Appointment {
   user: User;
   testTypeName: string;
   appointmentDate: string;
-  status: AppointmentStatus;
+  status: string;
   notes?: string;
   createdAt: string;
+  updatedAt: string;
+}
+
+export interface Test {
+  id: number;
+  user: User;
+  sampleCode: string;
+  testTypeName: string;
+  status: string;
+  totalAmount: number;
+  paymentStatus: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface TestResult {
+  id: number;
+  test: Test;
+  resultData: string;
+  interpretation: string;
+  recommendations: string;
+  performedBy: User;
+  performedAt: string;
+  createdAt: string;
+  updatedAt: string;
 } 

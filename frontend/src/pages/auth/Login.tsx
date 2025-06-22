@@ -1,32 +1,33 @@
 import React, { useState } from 'react';
-import { login } from '../../api';
 import { User } from '../../types';
 
-interface Props {
+interface LoginProps {
   onLogin: (user: User) => void;
-  onSwitch: () => void;
 }
 
-const Login: React.FC<Props> = ({ onLogin, onSwitch }) => {
+const Login: React.FC<LoginProps> = ({ onLogin }) => {
   const [form, setForm] = useState({ username: '', password: '' });
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await login(form);
-      onLogin(res.data.user);
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Đăng nhập thất bại.');
-    } finally {
-      setLoading(false);
+    // TODO: Gọi API đăng nhập thực tế
+    if (form.username && form.password) {
+      onLogin({
+        id: 1,
+        username: form.username,
+        email: 'user@email.com',
+        fullName: 'Demo User',
+        role: 'ROLE_CUSTOMER',
+        createdAt: '',
+        updatedAt: ''
+      });
+    } else {
+      setError('Vui lòng nhập đầy đủ thông tin');
     }
   };
 
@@ -40,13 +41,13 @@ const Login: React.FC<Props> = ({ onLogin, onSwitch }) => {
         <div style={{ marginBottom: 18 }}>
           <input name="password" type="password" placeholder="Mật khẩu" value={form.password} onChange={handleChange} required style={{ width: '100%', padding: 12, borderRadius: 6, border: '1px solid #bbb', fontSize: 16, marginBottom: 4 }} />
         </div>
-        <button type="submit" disabled={loading} style={{ width: '100%', padding: 12, borderRadius: 6, background: '#1976d2', color: '#fff', fontWeight: 600, fontSize: 16, border: 'none', cursor: 'pointer', boxShadow: '0 2px 8px #1976d233', transition: 'background 0.2s' }}>
-          {loading ? 'Đang đăng nhập...' : 'Đăng nhập'}
+        <button type="submit" style={{ width: '100%', padding: 12, borderRadius: 6, background: '#1976d2', color: '#fff', fontWeight: 600, fontSize: 16, border: 'none', cursor: 'pointer', boxShadow: '0 2px 8px #1976d233', transition: 'background 0.2s' }}>
+          Đăng nhập
         </button>
         {error && <div style={{ color: 'red', marginTop: 16, textAlign: 'center' }}>{error}</div>}
         <div style={{ marginTop: 24, textAlign: 'center' }}>
           <span style={{ color: '#555' }}>Chưa có tài khoản?</span>
-          <button type="button" onClick={onSwitch} style={{ marginLeft: 8, color: '#1976d2', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: 15, textDecoration: 'underline' }}>Đăng ký</button>
+          <a href="/register" style={{ marginLeft: 8, color: '#1976d2', fontWeight: 600, fontSize: 15, textDecoration: 'underline' }}>Đăng ký</a>
         </div>
       </form>
     </div>

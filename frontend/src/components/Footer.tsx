@@ -1,8 +1,8 @@
 import React from 'react';
 
 const Footer: React.FC = () => (
-  <footer style={{ background: '#222', color: '#fff', textAlign: 'center', padding: 16, fontSize: 15 }}>
-    &copy; {new Date().getFullYear()} DNA Testing Service. Liên hệ: info@dnatesting.com
+  <footer style={{ background: '#f5f5f5', color: '#555', padding: '18px 32px', textAlign: 'center', marginTop: 40 }}>
+    <div>Trung tâm Xét nghiệm ADN &copy; {new Date().getFullYear()} | Hotline: 0123 456 789 | Email: info@dnacenter.vn</div>
   </footer>
 );
 

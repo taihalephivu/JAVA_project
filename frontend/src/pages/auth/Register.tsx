@@ -1,34 +1,33 @@
 import React, { useState } from 'react';
-import { register } from '../../api';
 import { User } from '../../types';
 
-interface Props {
+interface RegisterProps {
   onLogin: (user: User) => void;
-  onSwitch: () => void;
 }
 
-const Register: React.FC<Props> = ({ onLogin, onSwitch }) => {
-  const [form, setForm] = useState({
-    username: '', email: '', password: '', fullName: '', phoneNumber: '', role: 'ROLE_CUSTOMER',
-  });
+const Register: React.FC<RegisterProps> = ({ onLogin }) => {
+  const [form, setForm] = useState({ username: '', email: '', password: '', fullName: '' });
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await register(form);
-      onLogin(res.data.user);
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Đăng ký thất bại.');
-    } finally {
-      setLoading(false);
+    // TODO: Gọi API đăng ký thực tế
+    if (form.username && form.email && form.password && form.fullName) {
+      onLogin({
+        id: 2,
+        username: form.username,
+        email: form.email,
+        fullName: form.fullName,
+        role: 'ROLE_CUSTOMER',
+        createdAt: '',
+        updatedAt: ''
+      });
+    } else {
+      setError('Vui lòng nhập đầy đủ thông tin');
     }
   };
 
@@ -48,16 +47,13 @@ const Register: React.FC<Props> = ({ onLogin, onSwitch }) => {
         <div style={{ marginBottom: 16 }}>
           <input name="fullName" placeholder="Họ và tên" value={form.fullName} onChange={handleChange} required style={{ width: '100%', padding: 12, borderRadius: 6, border: '1px solid #bbb', fontSize: 16, marginBottom: 4 }} />
         </div>
-        <div style={{ marginBottom: 16 }}>
-          <input name="phoneNumber" placeholder="Số điện thoại" value={form.phoneNumber} onChange={handleChange} style={{ width: '100%', padding: 12, borderRadius: 6, border: '1px solid #bbb', fontSize: 16, marginBottom: 4 }} />
-        </div>
-        <button type="submit" disabled={loading} style={{ width: '100%', padding: 12, borderRadius: 6, background: '#1976d2', color: '#fff', fontWeight: 600, fontSize: 16, border: 'none', cursor: 'pointer', boxShadow: '0 2px 8px #1976d233', transition: 'background 0.2s' }}>
-          {loading ? 'Đang đăng ký...' : 'Đăng ký'}
+        <button type="submit" style={{ width: '100%', padding: 12, borderRadius: 6, background: '#1976d2', color: '#fff', fontWeight: 600, fontSize: 16, border: 'none', cursor: 'pointer', boxShadow: '0 2px 8px #1976d233', transition: 'background 0.2s' }}>
+          Đăng ký
         </button>
         {error && <div style={{ color: 'red', marginTop: 16, textAlign: 'center' }}>{error}</div>}
         <div style={{ marginTop: 24, textAlign: 'center' }}>
           <span style={{ color: '#555' }}>Đã có tài khoản?</span>
-          <button type="button" onClick={onSwitch} style={{ marginLeft: 8, color: '#1976d2', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: 15, textDecoration: 'underline' }}>Đăng nhập</button>
+          <a href="/login" style={{ marginLeft: 8, color: '#1976d2', fontWeight: 600, fontSize: 15, textDecoration: 'underline' }}>Đăng nhập</a>
         </div>
       </form>
     </div>
