@@ -42,6 +42,7 @@ export const deleteTestResult = (id: string) => api.delete(`/test-results/${id}`
 // Users (admin)
 export const getUsers = () => api.get('/users');
 export const getUser = (id: string) => api.get(`/users/${id}`);
+export const deleteUser = (id: string) => api.delete(`/users/${id}`);
 
 // Profile
 export const getProfile = (id: string) => api.get(`/users/${id}`);
