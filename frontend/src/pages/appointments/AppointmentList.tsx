@@ -2,17 +2,37 @@ import React, { useEffect, useState } from 'react';
 import { getAppointments } from '../../api';
 import { Appointment } from '../../types';
 
+function getUserRole(): string | null {
+  try {
+    const userStr = localStorage.getItem('user');
+    if (userStr) {
+      const user = JSON.parse(userStr);
+      return user.role || null;
+    }
+    const token = localStorage.getItem('token');
+    if (token) {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.role || null;
+    }
+  } catch {
+    return null;
+  }
+  return null;
+}
+
 const AppointmentList: React.FC = () => {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const role = getUserRole();
+  const isAdmin = role === 'ROLE_ADMIN';
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       setError(null);
       try {
-        const res = await getAppointments();
+        const res = await getAppointments(isAdmin);
         // Nếu backend trả về Page, lấy .content, nếu trả về mảng thì lấy trực tiếp
         setAppointments(res.data.content || res.data);
       } catch (err: any) {
@@ -22,7 +42,7 @@ const AppointmentList: React.FC = () => {
       }
     };
     fetchData();
-  }, []);
+  }, [isAdmin]);
 
   return (
     <div style={{ maxWidth: 800, margin: '0 auto', background: '#fff', borderRadius: 12, boxShadow: '0 4px 24px #0001', padding: 32 }}>

@@ -2,17 +2,37 @@ import React, { useEffect, useState } from 'react';
 import { getTests } from '../../api';
 import { Test } from '../../types';
 
+function getUserRole(): string | null {
+  try {
+    const userStr = localStorage.getItem('user');
+    if (userStr) {
+      const user = JSON.parse(userStr);
+      return user.role || null;
+    }
+    const token = localStorage.getItem('token');
+    if (token) {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.role || null;
+    }
+  } catch {
+    return null;
+  }
+  return null;
+}
+
 const TestList: React.FC = () => {
   const [tests, setTests] = useState<Test[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const role = getUserRole();
+  const isAdmin = role === 'ROLE_ADMIN';
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       setError(null);
       try {
-        const res = await getTests();
+        const res = await getTests(isAdmin);
         setTests(res.data.content || res.data);
       } catch (err: any) {
         setError(err.response?.data?.message || 'Không thể tải danh sách xét nghiệm');
@@ -21,7 +41,7 @@ const TestList: React.FC = () => {
       }
     };
     fetchData();
-  }, []);
+  }, [isAdmin]);
 
   return (
     <div style={{ maxWidth: 800, margin: '0 auto', background: '#fff', borderRadius: 12, boxShadow: '0 4px 24px #0001', padding: 32 }}>
