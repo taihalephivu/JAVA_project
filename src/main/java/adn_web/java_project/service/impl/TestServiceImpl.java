@@ -45,7 +45,7 @@ public class TestServiceImpl implements TestService {
             throw new RuntimeException("Test with sample code " + test.getSampleCode() + " already exists");
         }
 
-        existingTest.setTestType(test.getTestType());
+        existingTest.setTestTypeName(test.getTestTypeName());
         existingTest.setUser(test.getUser());
         existingTest.setSampleCode(test.getSampleCode());
         existingTest.setSampleCollectionDate(test.getSampleCollectionDate());
@@ -82,12 +82,6 @@ public class TestServiceImpl implements TestService {
     @Transactional(readOnly = true)
     public List<Test> getTestsByUserId(Long userId) {
         return testRepository.findByUserId(userId);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<Test> getTestsByTestTypeId(Long testTypeId) {
-        return testRepository.findByTestTypeId(testTypeId);
     }
 
     @Override
@@ -151,5 +145,11 @@ public class TestServiceImpl implements TestService {
     @Transactional(readOnly = true)
     public Page<Test> getTestsByUsername(String username, Pageable pageable) {
         return testRepository.findByUser_Username(username, pageable);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<Test> findAll(Pageable pageable) {
+        return testRepository.findAll(pageable);
     }
 } 

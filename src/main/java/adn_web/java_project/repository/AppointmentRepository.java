@@ -14,7 +14,6 @@ import java.util.Optional;
 @Repository
 public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
     List<Appointment> findByUserId(Long userId);
-    List<Appointment> findByTestTypeId(Long testTypeId);
     List<Appointment> findByStatus(AppointmentStatus status);
     List<Appointment> findByUserIdAndStatus(Long userId, AppointmentStatus status);
     List<Appointment> findByAppointmentDateBetween(LocalDateTime startDate, LocalDateTime endDate);

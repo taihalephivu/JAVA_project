@@ -45,7 +45,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         }
 
         existingAppointment.setUser(appointment.getUser());
-        existingAppointment.setTestType(appointment.getTestType());
+        existingAppointment.setTestTypeName(appointment.getTestTypeName());
         existingAppointment.setAppointmentDate(appointment.getAppointmentDate());
         existingAppointment.setStatus(appointment.getStatus());
         existingAppointment.setNotes(appointment.getNotes());
@@ -71,12 +71,6 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Transactional(readOnly = true)
     public List<Appointment> getAppointmentsByUserId(Long userId) {
         return appointmentRepository.findByUserId(userId);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<Appointment> getAppointmentsByTestTypeId(Long testTypeId) {
-        return appointmentRepository.findByTestTypeId(testTypeId);
     }
 
     @Override
@@ -124,5 +118,11 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Transactional(readOnly = true)
     public Page<Appointment> getAppointmentsByUsername(String username, Pageable pageable) {
         return appointmentRepository.findByUser_Username(username, pageable);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<Appointment> findAll(Pageable pageable) {
+        return appointmentRepository.findAll(pageable);
     }
 } 

@@ -14,9 +14,8 @@ public class Appointment {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "test_type_id", nullable = false)
-    private TestType testType;
+    @Column(name = "test_type_name", nullable = false)
+    private String testTypeName;
 
     @Column(name = "appointment_date", nullable = false)
     private LocalDateTime appointmentDate;
@@ -65,12 +64,12 @@ public class Appointment {
         this.user = user;
     }
 
-    public TestType getTestType() {
-        return testType;
+    public String getTestTypeName() {
+        return testTypeName;
     }
 
-    public void setTestType(TestType testType) {
-        this.testType = testType;
+    public void setTestTypeName(String testTypeName) {
+        this.testTypeName = testTypeName;
     }
 
     public LocalDateTime getAppointmentDate() {

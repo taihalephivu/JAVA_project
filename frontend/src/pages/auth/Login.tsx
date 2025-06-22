@@ -1,122 +1,55 @@
-import React from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
-import {
-  Container,
-  Box,
-  Typography,
-  TextField,
-  Button,
-  Link,
-  Paper,
-} from '@mui/material';
-import { setCredentials } from '../../features/auth/authSlice';
-import { LoginRequest } from '../../types';
-import api from '../../services/api';
+import React, { useState } from 'react';
+import { login } from '../../api';
+import { User } from '../../types';
 
-const schema = yup.object().shape({
-  username: yup.string().required('Username is required'),
-  password: yup.string().required('Password is required'),
-});
+interface Props {
+  onLogin: (user: User) => void;
+  onSwitch: () => void;
+}
 
-const Login = () => {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const location = useLocation();
-  const from = location.state?.from?.pathname || '/dashboard';
+const Login: React.FC<Props> = ({ onLogin, onSwitch }) => {
+  const [form, setForm] = useState({ username: '', password: '' });
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<LoginRequest>({
-    resolver: yupResolver(schema),
-  });
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
 
-  const onSubmit = async (data: LoginRequest) => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
     try {
-      const response = await api.post('/api/auth/login', data);
-      const { user, token } = response.data;
-      dispatch(setCredentials({ user, token }));
-      navigate(from, { replace: true });
-    } catch (error) {
-      console.error('Login failed:', error);
-      // TODO: Add user-friendly error handling (e.g., toast notification)
+      const res = await login(form);
+      onLogin(res.data.user);
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Đăng nhập thất bại.');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <Container component="main" maxWidth="xs">
-      <Box
-        sx={{
-          marginTop: 8,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}
-      >
-        <Paper
-          elevation={3}
-          sx={{
-            padding: 4,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            width: '100%',
-          }}
-        >
-          <Typography component="h1" variant="h5">
-            Sign in
-          </Typography>
-          <Box
-            component="form"
-            onSubmit={handleSubmit(onSubmit)}
-            sx={{ mt: 1, width: '100%' }}
-          >
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="username"
-              label="Username"
-              autoComplete="username"
-              autoFocus
-              {...register('username')}
-              error={!!errors.username}
-              helperText={errors.username?.message}
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-              {...register('password')}
-              error={!!errors.password}
-              helperText={errors.password?.message}
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              Sign In
-            </Button>
-            <Box sx={{ textAlign: 'center' }}>
-              <Link href="/register" variant="body2">
-                {"Don't have an account? Sign Up"}
-              </Link>
-            </Box>
-          </Box>
-        </Paper>
-      </Box>
-    </Container>
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 400 }}>
+      <form onSubmit={handleSubmit} style={{ background: '#fff', borderRadius: 12, boxShadow: '0 4px 24px #0002', padding: 32, minWidth: 340, maxWidth: 380 }}>
+        <h2 style={{ textAlign: 'center', marginBottom: 24, color: '#1976d2', letterSpacing: 1 }}>Đăng nhập</h2>
+        <div style={{ marginBottom: 18 }}>
+          <input name="username" placeholder="Tên đăng nhập" value={form.username} onChange={handleChange} required style={{ width: '100%', padding: 12, borderRadius: 6, border: '1px solid #bbb', fontSize: 16, marginBottom: 4 }} />
+        </div>
+        <div style={{ marginBottom: 18 }}>
+          <input name="password" type="password" placeholder="Mật khẩu" value={form.password} onChange={handleChange} required style={{ width: '100%', padding: 12, borderRadius: 6, border: '1px solid #bbb', fontSize: 16, marginBottom: 4 }} />
+        </div>
+        <button type="submit" disabled={loading} style={{ width: '100%', padding: 12, borderRadius: 6, background: '#1976d2', color: '#fff', fontWeight: 600, fontSize: 16, border: 'none', cursor: 'pointer', boxShadow: '0 2px 8px #1976d233', transition: 'background 0.2s' }}>
+          {loading ? 'Đang đăng nhập...' : 'Đăng nhập'}
+        </button>
+        {error && <div style={{ color: 'red', marginTop: 16, textAlign: 'center' }}>{error}</div>}
+        <div style={{ marginTop: 24, textAlign: 'center' }}>
+          <span style={{ color: '#555' }}>Chưa có tài khoản?</span>
+          <button type="button" onClick={onSwitch} style={{ marginLeft: 8, color: '#1976d2', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: 15, textDecoration: 'underline' }}>Đăng ký</button>
+        </div>
+      </form>
+    </div>
   );
 };
 

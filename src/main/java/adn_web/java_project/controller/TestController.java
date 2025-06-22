@@ -4,6 +4,8 @@ import adn_web.java_project.model.Test;
 import adn_web.java_project.model.TestStatus;
 import adn_web.java_project.model.PaymentStatus;
 import adn_web.java_project.service.TestService;
+import adn_web.java_project.model.Appointment;
+import adn_web.java_project.service.AppointmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,10 +27,12 @@ import java.util.HashMap;
 public class TestController {
 
     private final TestService testService;
+    private final AppointmentService appointmentService;
 
     @Autowired
-    public TestController(TestService testService) {
+    public TestController(TestService testService, AppointmentService appointmentService) {
         this.testService = testService;
+        this.appointmentService = appointmentService;
     }
 
     @PostMapping
@@ -91,11 +95,6 @@ public class TestController {
         return ResponseEntity.ok(testService.getTestsByUserId(userId, pageable));
     }
 
-    @GetMapping("/type/{testTypeId}")
-    public ResponseEntity<List<Test>> getTestsByTestTypeId(@PathVariable Long testTypeId) {
-        return ResponseEntity.ok(testService.getTestsByTestTypeId(testTypeId));
-    }
-
     @GetMapping("/status/{status}")
     public ResponseEntity<List<Test>> getTestsByStatus(@PathVariable TestStatus status) {
         return ResponseEntity.ok(testService.getTestsByStatus(status));
@@ -133,7 +132,7 @@ public class TestController {
     }
 
     @PutMapping("/{id}/status")
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF', 'CUSTOMER')")
     public ResponseEntity<?> updateTestStatus(
             @PathVariable Long id,
             @RequestParam TestStatus status) {
@@ -168,5 +167,12 @@ public class TestController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUsername = authentication.getName();
         return ResponseEntity.ok(testService.getTestsByUsername(currentUsername, pageable));
+    }
+
+    @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF', 'MANAGER')")
+    public ResponseEntity<Page<Test>> getAllTests(Pageable pageable) {
+        Page<Test> tests = testService.findAll(pageable);
+        return ResponseEntity.ok(tests);
     }
 } 

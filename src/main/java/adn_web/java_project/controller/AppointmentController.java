@@ -1,8 +1,11 @@
 package adn_web.java_project.controller;
 
+import adn_web.java_project.dto.appointment.AppointmentRequestDTO;
 import adn_web.java_project.model.Appointment;
 import adn_web.java_project.model.AppointmentStatus;
+import adn_web.java_project.model.User;
 import adn_web.java_project.service.AppointmentService;
+import adn_web.java_project.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,16 +27,28 @@ import java.util.HashMap;
 public class AppointmentController {
 
     private final AppointmentService appointmentService;
+    private final UserService userService;
 
     @Autowired
-    public AppointmentController(AppointmentService appointmentService) {
+    public AppointmentController(AppointmentService appointmentService, UserService userService) {
         this.appointmentService = appointmentService;
+        this.userService = userService;
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF', 'CUSTOMER')")
-    public ResponseEntity<?> createAppointment(@RequestBody Appointment appointment) {
+    @PreAuthorize("hasRole('CUSTOMER')")
+    public ResponseEntity<?> createAppointment(@RequestBody AppointmentRequestDTO request) {
         try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String currentUsername = authentication.getName();
+            User currentUser = userService.findByUsername(currentUsername);
+
+            Appointment appointment = new Appointment();
+            appointment.setUser(currentUser);
+            appointment.setTestTypeName(request.getTestTypeName());
+            appointment.setAppointmentDate(request.getAppointmentDate());
+            appointment.setNotes(request.getNotes());
+
             Appointment createdAppointment = appointmentService.createAppointment(appointment);
             return ResponseEntity.ok(createdAppointment);
         } catch (RuntimeException e) {
@@ -85,11 +100,6 @@ public class AppointmentController {
         return ResponseEntity.ok(appointmentService.getAppointmentsByUserId(userId, pageable));
     }
 
-    @GetMapping("/test-type/{testTypeId}")
-    public ResponseEntity<List<Appointment>> getAppointmentsByTestTypeId(@PathVariable Long testTypeId) {
-        return ResponseEntity.ok(appointmentService.getAppointmentsByTestTypeId(testTypeId));
-    }
-
     @GetMapping("/status/{status}")
     public ResponseEntity<List<Appointment>> getAppointmentsByStatus(@PathVariable AppointmentStatus status) {
         return ResponseEntity.ok(appointmentService.getAppointmentsByStatus(status));
@@ -118,7 +128,7 @@ public class AppointmentController {
     }
 
     @PutMapping("/{id}/status")
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF', 'CUSTOMER')")
     public ResponseEntity<?> updateAppointmentStatus(
             @PathVariable Long id,
             @RequestParam AppointmentStatus status) {
@@ -138,5 +148,12 @@ public class AppointmentController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUsername = authentication.getName();
         return ResponseEntity.ok(appointmentService.getAppointmentsByUsername(currentUsername, pageable));
+    }
+
+    @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF', 'MANAGER')")
+    public ResponseEntity<Page<Appointment>> getAllAppointments(Pageable pageable) {
+        Page<Appointment> appointments = appointmentService.findAll(pageable);
+        return ResponseEntity.ok(appointments);
     }
 } 

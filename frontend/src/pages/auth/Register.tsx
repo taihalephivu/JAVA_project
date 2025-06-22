@@ -1,194 +1,66 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
-import {
-  Container,
-  Box,
-  Typography,
-  TextField,
-  Button,
-  Link,
-  Paper,
-  MenuItem,
-  CircularProgress,
-  Alert,
-} from '@mui/material';
-import { Role } from '../../types';
-import api from '../../services/api';
-import { setCredentials } from '../../features/auth/authSlice';
+import { register } from '../../api';
+import { User } from '../../types';
 
-const schema = yup.object().shape({
-  username: yup.string().required('Username is required'),
-  email: yup.string().email('Invalid email').required('Email is required'),
-  password: yup.string().min(6, 'Password must be at least 6 characters').required('Password is required'),
-  fullName: yup.string().required('Full name is required'),
-  phoneNumber: yup.string().optional(),
-  role: yup.string().oneOf(Object.values(Role)).required('Role is required'),
-});
+interface Props {
+  onLogin: (user: User) => void;
+  onSwitch: () => void;
+}
 
-type RegisterFormData = {
-  username: string;
-  email: string;
-  password: string;
-  fullName: string;
-  phoneNumber?: string;
-  role: Role;
-};
-
-const Register = () => {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<RegisterFormData>({
-    resolver: yupResolver(schema),
+const Register: React.FC<Props> = ({ onLogin, onSwitch }) => {
+  const [form, setForm] = useState({
+    username: '', email: '', password: '', fullName: '', phoneNumber: '', role: 'ROLE_CUSTOMER',
   });
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  const onSubmit = async (data: RegisterFormData) => {
-    setIsLoading(true);
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
     setError(null);
     try {
-      const response = await api.post('/api/auth/signup', data);
-      const { user, token } = response.data;
-      dispatch(setCredentials({ user, token }));
-      navigate('/dashboard', { replace: true });
+      const res = await register(form);
+      onLogin(res.data.user);
     } catch (err: any) {
-      console.error('Registration failed:', err);
-      setError(err.response?.data?.message || 'Đã có lỗi xảy ra trong quá trình đăng ký.');
+      setError(err.response?.data?.message || 'Đăng ký thất bại.');
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
   return (
-    <Container component="main" maxWidth="xs">
-      <Box
-        sx={{
-          marginTop: 8,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}
-      >
-        <Paper
-          elevation={3}
-          sx={{
-            padding: 4,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            width: '100%',
-          }}
-        >
-          <Typography component="h1" variant="h5">
-            Sign up
-          </Typography>
-          {error && (
-            <Alert severity="error" sx={{ width: '100%', mt: 2 }}>
-              {error}
-            </Alert>
-          )}
-          <Box
-            component="form"
-            onSubmit={handleSubmit(onSubmit)}
-            sx={{ mt: 1, width: '100%' }}
-          >
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="username"
-              label="Username"
-              autoComplete="username"
-              autoFocus
-              {...register('username')}
-              error={!!errors.username}
-              helperText={errors.username?.message}
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Email Address"
-              autoComplete="email"
-              {...register('email')}
-              error={!!errors.email}
-              helperText={errors.email?.message}
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="new-password"
-              {...register('password')}
-              error={!!errors.password}
-              helperText={errors.password?.message}
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="fullName"
-              label="Full Name"
-              autoComplete="name"
-              {...register('fullName')}
-              error={!!errors.fullName}
-              helperText={errors.fullName?.message}
-            />
-            <TextField
-              margin="normal"
-              fullWidth
-              id="phoneNumber"
-              label="Phone Number"
-              autoComplete="tel"
-              {...register('phoneNumber')}
-              error={!!errors.phoneNumber}
-              helperText={errors.phoneNumber?.message}
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              select
-              id="role"
-              label="Role"
-              {...register('role')}
-              error={!!errors.role}
-              helperText={errors.role?.message}
-            >
-              <MenuItem value={Role.ROLE_CUSTOMER}>Customer</MenuItem>
-              <MenuItem value={Role.ROLE_STAFF}>Staff</MenuItem>
-            </TextField>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-              disabled={isLoading}
-            >
-              {isLoading ? <CircularProgress size={24} /> : 'Sign Up'}
-            </Button>
-            <Box sx={{ textAlign: 'center' }}>
-              <Link href="/login" variant="body2">
-                {"Already have an account? Sign In"}
-              </Link>
-            </Box>
-          </Box>
-        </Paper>
-      </Box>
-    </Container>
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 500 }}>
+      <form onSubmit={handleSubmit} style={{ background: '#fff', borderRadius: 12, boxShadow: '0 4px 24px #0002', padding: 32, minWidth: 340, maxWidth: 420 }}>
+        <h2 style={{ textAlign: 'center', marginBottom: 24, color: '#1976d2', letterSpacing: 1 }}>Đăng ký tài khoản</h2>
+        <div style={{ marginBottom: 16 }}>
+          <input name="username" placeholder="Tên đăng nhập" value={form.username} onChange={handleChange} required style={{ width: '100%', padding: 12, borderRadius: 6, border: '1px solid #bbb', fontSize: 16, marginBottom: 4 }} />
+        </div>
+        <div style={{ marginBottom: 16 }}>
+          <input name="email" placeholder="Email" value={form.email} onChange={handleChange} required style={{ width: '100%', padding: 12, borderRadius: 6, border: '1px solid #bbb', fontSize: 16, marginBottom: 4 }} />
+        </div>
+        <div style={{ marginBottom: 16 }}>
+          <input name="password" type="password" placeholder="Mật khẩu" value={form.password} onChange={handleChange} required style={{ width: '100%', padding: 12, borderRadius: 6, border: '1px solid #bbb', fontSize: 16, marginBottom: 4 }} />
+        </div>
+        <div style={{ marginBottom: 16 }}>
+          <input name="fullName" placeholder="Họ và tên" value={form.fullName} onChange={handleChange} required style={{ width: '100%', padding: 12, borderRadius: 6, border: '1px solid #bbb', fontSize: 16, marginBottom: 4 }} />
+        </div>
+        <div style={{ marginBottom: 16 }}>
+          <input name="phoneNumber" placeholder="Số điện thoại" value={form.phoneNumber} onChange={handleChange} style={{ width: '100%', padding: 12, borderRadius: 6, border: '1px solid #bbb', fontSize: 16, marginBottom: 4 }} />
+        </div>
+        <button type="submit" disabled={loading} style={{ width: '100%', padding: 12, borderRadius: 6, background: '#1976d2', color: '#fff', fontWeight: 600, fontSize: 16, border: 'none', cursor: 'pointer', boxShadow: '0 2px 8px #1976d233', transition: 'background 0.2s' }}>
+          {loading ? 'Đang đăng ký...' : 'Đăng ký'}
+        </button>
+        {error && <div style={{ color: 'red', marginTop: 16, textAlign: 'center' }}>{error}</div>}
+        <div style={{ marginTop: 24, textAlign: 'center' }}>
+          <span style={{ color: '#555' }}>Đã có tài khoản?</span>
+          <button type="button" onClick={onSwitch} style={{ marginLeft: 8, color: '#1976d2', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: 15, textDecoration: 'underline' }}>Đăng nhập</button>
+        </div>
+      </form>
+    </div>
   );
 };
 

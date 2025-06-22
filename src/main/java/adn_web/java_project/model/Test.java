@@ -12,10 +12,6 @@ public class Test {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "test_type_id", nullable = false)
-    private TestType testType;
-
-    @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
@@ -48,6 +44,9 @@ public class Test {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Column(name = "test_type_name", nullable = false)
+    private String testTypeName;
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
@@ -72,14 +71,6 @@ public class Test {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public TestType getTestType() {
-        return testType;
-    }
-
-    public void setTestType(TestType testType) {
-        this.testType = testType;
     }
 
     public User getUser() {
@@ -160,5 +151,13 @@ public class Test {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public String getTestTypeName() {
+        return testTypeName;
+    }
+
+    public void setTestTypeName(String testTypeName) {
+        this.testTypeName = testTypeName;
     }
 } 

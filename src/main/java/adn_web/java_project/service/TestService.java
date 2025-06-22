@@ -17,7 +17,6 @@ public interface TestService {
     Optional<Test> getTestById(Long id);
     Optional<Test> getTestBySampleCode(String sampleCode);
     List<Test> getTestsByUserId(Long userId);
-    List<Test> getTestsByTestTypeId(Long testTypeId);
     List<Test> getTestsByStatus(TestStatus status);
     List<Test> getTestsByPaymentStatus(PaymentStatus paymentStatus);
     List<Test> getTestsByUserIdAndStatus(Long userId, TestStatus status);
@@ -28,4 +27,5 @@ public interface TestService {
     Test updateTestStatus(Long id, TestStatus status);
     Test updatePaymentStatus(Long id, PaymentStatus status);
     Page<Test> getTestsByUsername(String username, Pageable pageable);
+    Page<Test> findAll(Pageable pageable);
 } 

@@ -19,7 +19,6 @@ import java.util.Optional;
 public interface TestRepository extends JpaRepository<Test, Long> {
     Optional<Test> findBySampleCode(String sampleCode);
     List<Test> findByUserId(Long userId);
-    List<Test> findByTestTypeId(Long testTypeId);
     List<Test> findByStatus(TestStatus status);
     List<Test> findByPaymentStatus(PaymentStatus paymentStatus);
     List<Test> findByUserIdAndStatus(Long userId, TestStatus status);

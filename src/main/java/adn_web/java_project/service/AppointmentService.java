@@ -16,7 +16,6 @@ public interface AppointmentService {
     Optional<Appointment> getAppointmentById(Long id);
     List<Appointment> getAppointmentsByUserId(Long userId);
     Page<Appointment> getAppointmentsByUsername(String username, Pageable pageable);
-    List<Appointment> getAppointmentsByTestTypeId(Long testTypeId);
     List<Appointment> getAppointmentsByStatus(AppointmentStatus status);
     List<Appointment> getAppointmentsByUserIdAndStatus(Long userId, AppointmentStatus status);
     List<Appointment> getAppointmentsByDateRange(LocalDateTime startDate, LocalDateTime endDate);
@@ -27,4 +26,5 @@ public interface AppointmentService {
         AppointmentStatus status
     );
     Appointment updateAppointmentStatus(Long id, AppointmentStatus status);
+    Page<Appointment> findAll(Pageable pageable);
 } 
