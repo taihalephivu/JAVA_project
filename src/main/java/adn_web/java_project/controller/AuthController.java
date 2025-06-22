@@ -32,7 +32,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<Map<String, Object>> login(@RequestBody LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(
                 loginRequest.getUsername(),
@@ -42,26 +42,51 @@ public class AuthController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String token = jwtService.generateToken(userDetails);
-        Map<String, String> response = new HashMap<>();
+        
+        User user = userService.findByUsername(userDetails.getUsername());
+
+        Map<String, Object> response = new HashMap<>();
         response.put("token", token);
+        response.put("user", user);
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<Map<String, String>> signup(@RequestBody SignupRequest signupRequest) {
-        if (userService.existsByUsername(signupRequest.getUsername())) {
-            Map<String, String> response = new HashMap<>();
-            response.put("message", "Username is already taken!");
+    public ResponseEntity<Map<String, Object>> signup(@RequestBody SignupRequest signupRequest) {
+        try {
+            if (userService.existsByUsername(signupRequest.getUsername())) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("message", "Tên người dùng đã tồn tại!");
+                return ResponseEntity.badRequest().body(response);
+            }
+            if (userService.existsByEmail(signupRequest.getEmail())) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("message", "Email đã được sử dụng!");
+                return ResponseEntity.badRequest().body(response);
+            }
+            
+            User user = userService.createUser(signupRequest);
+
+            // Automatically log in the user after registration
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            signupRequest.getUsername(),
+                            signupRequest.getPassword()
+                    )
+            );
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            String token = jwtService.generateToken(userDetails);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("token", token);
+            response.put("user", user);
+            return ResponseEntity.ok(response);
+            
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "Đã xảy ra lỗi trong quá trình đăng ký: " + e.getMessage());
             return ResponseEntity.badRequest().body(response);
         }
-        if (userService.existsByEmail(signupRequest.getEmail())) {
-            Map<String, String> response = new HashMap<>();
-            response.put("message", "Email is already in use!");
-            return ResponseEntity.badRequest().body(response);
-        }
-        User user = userService.createUser(signupRequest);
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "User registered successfully!");
-        return ResponseEntity.ok(response);
     }
 } 

@@ -127,4 +127,16 @@ export interface PaginatedResponse<T> {
   totalPages: number;
   size: number;
   number: number;
+}
+
+// Dashboard DTO
+export interface CustomerDashboardDTO {
+  totalTests: number;
+  pendingTests: number;
+  completedTests: number;
+  totalAppointments: number;
+  todayAppointments: number;
+  totalSpent: number;
+  recentTests: Test[];
+  upcomingAppointments: Appointment[];
 } 

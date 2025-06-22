@@ -16,6 +16,7 @@ import {
   ListItemText,
   ListItemAvatar,
   Divider,
+  Alert
 } from '@mui/material';
 import {
   Science,
@@ -28,49 +29,50 @@ import {
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { RootState } from '../../store';
-import { TestStatus, AppointmentStatus } from '../../types';
+import { Test, Appointment, TestStatus, AppointmentStatus, CustomerDashboardDTO } from '../../types';
+import api from '../../services/api';
+import Loading from '../../components/ui/Loading';
 
 const CustomerDashboard = () => {
   const navigate = useNavigate();
   const { user } = useSelector((state: RootState) => state.auth);
-  const [stats, setStats] = useState({
-    totalTests: 0,
-    pendingTests: 0,
-    completedTests: 0,
-    totalAppointments: 0,
-    todayAppointments: 0,
-    totalSpent: 0,
-  });
 
-  const [recentTests, setRecentTests] = useState([]);
-  const [upcomingAppointments, setUpcomingAppointments] = useState([]);
+  const [data, setData] = useState<CustomerDashboardDTO | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // TODO: Fetch customer dashboard data from API
-    // This is mock data for now
-    setStats({
-      totalTests: 5,
-      pendingTests: 2,
-      completedTests: 3,
-      totalAppointments: 8,
-      todayAppointments: 1,
-      totalSpent: 12500000,
-    });
+    const fetchDashboardData = async () => {
+      setLoading(true);
+      try {
+        const response = await api.get<CustomerDashboardDTO>('/api/dashboard/customer');
+        setData(response.data);
+      } catch (err) {
+        setError('Không thể tải dữ liệu dashboard.');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardData();
   }, []);
 
-  const getStatusColor = (status: string) => {
+  const getStatusChip = (status: TestStatus | AppointmentStatus) => {
     switch (status) {
       case TestStatus.COMPLETED:
       case AppointmentStatus.COMPLETED:
-        return 'success';
+        return <Chip label="Hoàn thành" size="small" color="success" />;
       case TestStatus.PENDING:
+        return <Chip label="Đang chờ" size="small" color="warning" icon={<Pending />} />;
       case AppointmentStatus.SCHEDULED:
-        return 'warning';
+      case AppointmentStatus.CONFIRMED:
+        return <Chip label="Đã xác nhận" size="small" color="info" icon={<CalendarToday />} />;
       case TestStatus.FAILED:
       case AppointmentStatus.CANCELLED:
-        return 'error';
+        return <Chip label="Đã hủy" size="small" color="error" />;
       default:
-        return 'default';
+        return <Chip label={status} size="small" />;
     }
   };
 
@@ -128,6 +130,18 @@ const CustomerDashboard = () => {
     </Card>
   );
 
+  if (loading) {
+    return <Loading message="Đang tải dữ liệu..." />;
+  }
+
+  if (error) {
+    return <Alert severity="error">{error}</Alert>;
+  }
+
+  if (!data) {
+    return <Typography>Không có dữ liệu để hiển thị.</Typography>;
+  }
+
   return (
     <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
       {/* Welcome Section */}
@@ -145,7 +159,7 @@ const CustomerDashboard = () => {
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
             title="Tổng số xét nghiệm"
-            value={stats.totalTests}
+            value={data.totalTests}
             icon={<Science />}
             color="primary.main"
             onClick={() => navigate('/tests')}
@@ -154,7 +168,7 @@ const CustomerDashboard = () => {
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
             title="Xét nghiệm đang chờ"
-            value={stats.pendingTests}
+            value={data.pendingTests}
             icon={<Pending />}
             color="warning.main"
             onClick={() => navigate('/tests')}
@@ -163,7 +177,7 @@ const CustomerDashboard = () => {
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
             title="Lịch hẹn hôm nay"
-            value={stats.todayAppointments}
+            value={data.todayAppointments}
             icon={<CalendarToday />}
             color="info.main"
             onClick={() => navigate('/appointments')}
@@ -172,7 +186,7 @@ const CustomerDashboard = () => {
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
             title="Tổng chi phí (VND)"
-            value={`${stats.totalSpent.toLocaleString()}`}
+            value={`${Number(data.totalSpent).toLocaleString()}`}
             icon={<Payment />}
             color="success.main"
           />
@@ -236,28 +250,21 @@ const CustomerDashboard = () => {
               </Button>
             </Box>
             <List>
-              {[1, 2, 3].map((item) => (
-                <React.Fragment key={item}>
-                  <ListItem>
+              {data.recentTests.length > 0 ? data.recentTests.map((test: Test, index: number) => (
+                <React.Fragment key={test.id}>
+                  <ListItem button onClick={() => navigate(`/tests/${test.id}`)}>
                     <ListItemAvatar>
-                      <Avatar sx={{ bgcolor: 'primary.main' }}>
-                        <Science />
-                      </Avatar>
+                      <Avatar sx={{ bgcolor: 'primary.main' }}><Science /></Avatar>
                     </ListItemAvatar>
                     <ListItemText
-                      primary={`Xét nghiệm #${1000 + item} - ADN Cha Con`}
-                      secondary={`Mã mẫu: SAMPLE${1000 + item} • Trạng thái: Đang xử lý`}
+                      primary={`${test.testType.name} - #${test.id}`}
+                      secondary={`Mã mẫu: ${test.sampleCode} • Ngày: ${new Date(test.createdAt).toLocaleDateString()}`}
                     />
-                    <Chip 
-                      label="Đang xử lý" 
-                      size="small" 
-                      color="warning"
-                      icon={<Pending />}
-                    />
+                    {getStatusChip(test.status)}
                   </ListItem>
-                  {item < 3 && <Divider />}
+                  {index < data.recentTests.length - 1 && <Divider />}
                 </React.Fragment>
-              ))}
+              )) : <Typography sx={{ p: 2 }}>Không có xét nghiệm nào gần đây.</Typography>}
             </List>
           </Paper>
         </Grid>
@@ -272,28 +279,21 @@ const CustomerDashboard = () => {
               </Button>
             </Box>
             <List>
-              {[1, 2, 3].map((item) => (
-                <React.Fragment key={item}>
-                  <ListItem>
+              {data.upcomingAppointments.length > 0 ? data.upcomingAppointments.map((appointment: Appointment, index: number) => (
+                <React.Fragment key={appointment.id}>
+                  <ListItem button onClick={() => navigate(`/appointments/${appointment.id}`)}>
                     <ListItemAvatar>
-                      <Avatar sx={{ bgcolor: 'info.main' }}>
-                        <Schedule />
-                      </Avatar>
+                      <Avatar sx={{ bgcolor: 'info.main' }}><Schedule /></Avatar>
                     </ListItemAvatar>
                     <ListItemText
-                      primary={`Lịch hẹn #${2000 + item}`}
-                      secondary={`Ngày mai, 10:00 AM • ADN Cha Con`}
+                      primary={appointment.testType.name}
+                      secondary={`Ngày: ${new Date(appointment.appointmentDate).toLocaleString()}`}
                     />
-                    <Chip 
-                      label="Đã xác nhận" 
-                      size="small" 
-                      color="info"
-                      icon={<CalendarToday />}
-                    />
+                    {getStatusChip(appointment.status)}
                   </ListItem>
-                  {item < 3 && <Divider />}
+                  {index < data.upcomingAppointments.length - 1 && <Divider />}
                 </React.Fragment>
-              ))}
+              )) : <Typography sx={{ p: 2 }}>Không có lịch hẹn nào sắp tới.</Typography>}
             </List>
           </Paper>
         </Grid>

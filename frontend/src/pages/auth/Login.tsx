@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -25,6 +25,9 @@ const schema = yup.object().shape({
 const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || '/dashboard';
+
   const {
     register,
     handleSubmit,
@@ -38,9 +41,10 @@ const Login = () => {
       const response = await api.post('/api/auth/login', data);
       const { user, token } = response.data;
       dispatch(setCredentials({ user, token }));
-      navigate('/');
+      navigate(from, { replace: true });
     } catch (error) {
       console.error('Login failed:', error);
+      // TODO: Add user-friendly error handling (e.g., toast notification)
     }
   };
 

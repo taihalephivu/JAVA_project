@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -12,9 +13,12 @@ import {
   Link,
   Paper,
   MenuItem,
+  CircularProgress,
+  Alert,
 } from '@mui/material';
 import { Role } from '../../types';
 import api from '../../services/api';
+import { setCredentials } from '../../features/auth/authSlice';
 
 const schema = yup.object().shape({
   username: yup.string().required('Username is required'),
@@ -36,6 +40,10 @@ type RegisterFormData = {
 
 const Register = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
   const {
     register,
     handleSubmit,
@@ -45,11 +53,18 @@ const Register = () => {
   });
 
   const onSubmit = async (data: RegisterFormData) => {
+    setIsLoading(true);
+    setError(null);
     try {
-      await api.post('/api/auth/signup', data);
-      navigate('/login');
-    } catch (error) {
-      console.error('Registration failed:', error);
+      const response = await api.post('/api/auth/signup', data);
+      const { user, token } = response.data;
+      dispatch(setCredentials({ user, token }));
+      navigate('/dashboard', { replace: true });
+    } catch (err: any) {
+      console.error('Registration failed:', err);
+      setError(err.response?.data?.message || 'Đã có lỗi xảy ra trong quá trình đăng ký.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -76,6 +91,11 @@ const Register = () => {
           <Typography component="h1" variant="h5">
             Sign up
           </Typography>
+          {error && (
+            <Alert severity="error" sx={{ width: '100%', mt: 2 }}>
+              {error}
+            </Alert>
+          )}
           <Box
             component="form"
             onSubmit={handleSubmit(onSubmit)}
@@ -156,8 +176,9 @@ const Register = () => {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+              disabled={isLoading}
             >
-              Sign Up
+              {isLoading ? <CircularProgress size={24} /> : 'Sign Up'}
             </Button>
             <Box sx={{ textAlign: 'center' }}>
               <Link href="/login" variant="body2">

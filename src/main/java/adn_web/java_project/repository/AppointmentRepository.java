@@ -24,4 +24,9 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
         LocalDateTime endDate, 
         AppointmentStatus status
     );
+
+    // --- New methods for Dashboard ---
+    long countByUserId(Long userId);
+    long countByUserIdAndAppointmentDateBetween(Long userId, LocalDateTime start, LocalDateTime end);
+    List<Appointment> findTop5ByUserIdAndAppointmentDateAfterOrderByAppointmentDateAsc(Long userId, LocalDateTime now);
 } 

@@ -9,4 +9,5 @@ public interface UserService {
     User findByEmail(String email);
     boolean existsByUsername(String username);
     boolean existsByEmail(String email);
+    java.util.List<User> findAllUsers();
 } 
