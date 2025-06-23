@@ -33,7 +33,7 @@ const TestList: React.FC = () => {
       setError(null);
       try {
         const res = await getTests(isAdmin);
-        setTests(res.data.content || res.data);
+        setTests((res.data as any).content || res.data as Test[]);
       } catch (err: any) {
         setError(err.response?.data?.message || 'Không thể tải danh sách xét nghiệm');
       } finally {

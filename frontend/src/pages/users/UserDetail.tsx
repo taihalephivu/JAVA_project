@@ -20,12 +20,12 @@ const UserDetail: React.FC = () => {
       setError(null);
       try {
         const res = await getUser(id!);
-        setUser(res.data);
+        setUser(res.data as User);
         setForm({
-          fullName: res.data.fullName || '',
-          email: res.data.email || '',
-          phoneNumber: res.data.phoneNumber || '',
-          role: res.data.role || ''
+          fullName: (res.data as User).fullName || '',
+          email: (res.data as User).email || '',
+          phoneNumber: (res.data as User).phoneNumber || '',
+          role: (res.data as User).role || ''
         });
       } catch (err: any) {
         setError(err.response?.data?.message || 'Không thể tải thông tin người dùng');

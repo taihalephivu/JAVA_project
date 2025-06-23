@@ -33,7 +33,7 @@ const TestResultList: React.FC = () => {
       setError(null);
       try {
         const res = await getTestResults(isAdmin);
-        setResults(res.data.content || res.data);
+        setResults((res.data as any).content || res.data as TestResult[]);
       } catch (err: any) {
         setError(err.response?.data?.message || 'Không thể tải kết quả xét nghiệm');
       } finally {

@@ -6,8 +6,13 @@ const api = axios.create({
 
 // Đính kèm token vào header nếu có
 api.interceptors.request.use(config => {
+  if (!config.headers) {
+    config.headers = {};
+  }
   const token = localStorage.getItem('token');
-  if (token) config.headers.Authorization = `Bearer ${token}`;
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
   return config;
 });
 

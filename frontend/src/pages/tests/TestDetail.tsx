@@ -40,13 +40,13 @@ const TestDetail: React.FC = () => {
       setError(null);
       try {
         const res = await getTest(id!);
-        setTest(res.data);
+        setTest(res.data as Test);
         setForm({
-          sampleCode: res.data.sampleCode || '',
-          testTypeName: res.data.testTypeName || '',
-          status: res.data.status || '',
-          totalAmount: res.data.totalAmount?.toString() || '',
-          paymentStatus: res.data.paymentStatus || ''
+          sampleCode: (res.data as Test).sampleCode || '',
+          testTypeName: (res.data as Test).testTypeName || '',
+          status: (res.data as Test).status || '',
+          totalAmount: (res.data as Test).totalAmount?.toString() || '',
+          paymentStatus: (res.data as Test).paymentStatus || ''
         });
       } catch (err: any) {
         setError(err.response?.data?.message || 'Không thể tải chi tiết xét nghiệm');

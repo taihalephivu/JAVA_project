@@ -34,7 +34,7 @@ const AppointmentList: React.FC = () => {
       try {
         const res = await getAppointments(isAdmin);
         // Nếu backend trả về Page, lấy .content, nếu trả về mảng thì lấy trực tiếp
-        setAppointments(res.data.content || res.data);
+        setAppointments((res.data as any).content || res.data as Appointment[]);
       } catch (err: any) {
         setError(err.response?.data?.message || 'Không thể tải lịch hẹn');
       } finally {

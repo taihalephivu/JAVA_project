@@ -40,12 +40,12 @@ const AppointmentDetail: React.FC = () => {
       setError(null);
       try {
         const res = await getAppointment(id!);
-        setAppointment(res.data);
+        setAppointment(res.data as Appointment);
         setForm({
-          testTypeName: res.data.testTypeName || '',
-          appointmentDate: res.data.appointmentDate?.slice(0, 10) || '',
-          status: res.data.status || '',
-          notes: res.data.notes || ''
+          testTypeName: (res.data as Appointment).testTypeName || '',
+          appointmentDate: (res.data as Appointment).appointmentDate?.slice(0, 10) || '',
+          status: (res.data as Appointment).status || '',
+          notes: (res.data as Appointment).notes || ''
         });
       } catch (err: any) {
         setError(err.response?.data?.message || 'Không thể tải chi tiết lịch hẹn');

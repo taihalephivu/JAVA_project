@@ -13,7 +13,7 @@ const UserList: React.FC = () => {
       setError(null);
       try {
         const res = await getUsers();
-        setUsers(res.data);
+        setUsers(res.data as User[]);
       } catch (err: any) {
         setError(err.response?.data?.message || 'Không thể tải danh sách người dùng');
       } finally {

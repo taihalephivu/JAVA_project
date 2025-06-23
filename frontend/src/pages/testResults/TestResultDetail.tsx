@@ -40,11 +40,11 @@ const TestResultDetail: React.FC = () => {
       setError(null);
       try {
         const res = await getTestResult(id!);
-        setResult(res.data);
+        setResult(res.data as TestResult);
         setForm({
-          resultData: res.data.resultData || '',
-          interpretation: res.data.interpretation || '',
-          recommendations: res.data.recommendations || ''
+          resultData: (res.data as TestResult).resultData || '',
+          interpretation: (res.data as TestResult).interpretation || '',
+          recommendations: (res.data as TestResult).recommendations || ''
         });
       } catch (err: any) {
         setError(err.response?.data?.message || 'Không thể tải chi tiết kết quả xét nghiệm');

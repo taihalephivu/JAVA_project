@@ -21,7 +21,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
     setError(null);
     try {
       const res = await loginApi(form);
-      const { token, user } = res.data;
+      const { token, user } = res.data as { token: string; user: User };
       localStorage.setItem('token', token);
       onLogin(user);
     } catch (err: any) {

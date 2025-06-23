@@ -36,7 +36,7 @@ const Profile: React.FC = () => {
       try {
         if (!userId) throw new Error('Không tìm thấy thông tin người dùng');
         const res = await getProfile(userId);
-        const user: User = res.data;
+        const user = res.data as User;
         setForm({
           fullName: user.fullName || '',
           email: user.email || '',
