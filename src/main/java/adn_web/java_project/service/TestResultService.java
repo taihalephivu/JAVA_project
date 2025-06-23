@@ -14,4 +14,9 @@ public interface TestResultService {
     List<TestResult> getTestResultsByPerformedById(Long performedById);
     List<TestResult> getTestResultsByDateRange(LocalDateTime startDate, LocalDateTime endDate);
     boolean existsByTestId(Long testId);
+    TestResult save(TestResult testResult);
+    Optional<TestResult> findById(Long id);
+    List<TestResult> findAll();
+    void deleteById(Long id);
+    List<TestResult> getMyResults(String username);
 } 

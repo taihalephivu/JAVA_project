@@ -5,6 +5,8 @@ import Home from './pages/public/Home';
 import About from './pages/public/About';
 import Packages from './pages/public/Packages';
 import Contact from './pages/public/Contact';
+import Posts from './pages/public/Posts';
+import PostDetail from './pages/public/PostDetail';
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import CustomerDashboard from './pages/dashboard/CustomerDashboard';
@@ -71,6 +73,8 @@ const App: React.FC = () => {
           <Route path="/about" element={<About />} />
           <Route path="/packages" element={<Packages />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/posts" element={<Posts />} />
+          <Route path="/posts/:id" element={<PostDetail />} />
           {/* Auth */}
           <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <Login onLogin={setUser} />} />
           <Route path="/register" element={user ? <Navigate to="/dashboard" /> : <Register onLogin={setUser} />} />

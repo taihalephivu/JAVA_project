@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -28,56 +30,58 @@ public class TestResultController {
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ResponseEntity<?> createTestResult(@RequestBody TestResult testResult) {
-        try {
-            TestResult createdTestResult = testResultService.createTestResult(testResult);
-            return ResponseEntity.ok(createdTestResult);
-        } catch (RuntimeException e) {
-            Map<String, String> response = new HashMap<>();
-            response.put("message", e.getMessage());
-            return ResponseEntity.badRequest().body(response);
-        }
+        TestResult createdTestResult = testResultService.save(testResult);
+        return ResponseEntity.status(201).body(createdTestResult);
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ResponseEntity<?> updateTestResult(@PathVariable Long id, @RequestBody TestResult testResult) {
-        try {
-            TestResult updatedTestResult = testResultService.updateTestResult(id, testResult);
-            return ResponseEntity.ok(updatedTestResult);
-        } catch (RuntimeException e) {
-            Map<String, String> response = new HashMap<>();
-            response.put("message", e.getMessage());
-            return ResponseEntity.badRequest().body(response);
-        }
+        return testResultService.findById(id)
+                .map(existingResult -> {
+                    testResult.setId(id);
+                    TestResult updatedResult = testResultService.save(testResult);
+                    return ResponseEntity.ok(updatedResult);
+                })
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deleteTestResult(@PathVariable Long id) {
-        try {
-            testResultService.deleteTestResult(id);
-            Map<String, String> response = new HashMap<>();
-            response.put("message", "Test result deleted successfully");
-            return ResponseEntity.ok(response);
-        } catch (RuntimeException e) {
-            Map<String, String> response = new HashMap<>();
-            response.put("message", e.getMessage());
-            return ResponseEntity.badRequest().body(response);
+        if (testResultService.findById(id).isEmpty()) {
+            return ResponseEntity.notFound().build();
         }
+        testResultService.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    public ResponseEntity<List<TestResult>> getAllTestResults() {
+        return ResponseEntity.ok(testResultService.findAll());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getTestResultById(@PathVariable Long id) {
-        return testResultService.getTestResultById(id)
+        return testResultService.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/test/{testId}")
     public ResponseEntity<?> getTestResultByTestId(@PathVariable Long testId) {
-        return testResultService.getTestResultByTestId(testId)
+        return testResultService.findByTestId(testId)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/my-results")
+    @PreAuthorize("hasRole('CUSTOMER')")
+    public ResponseEntity<List<TestResult>> getMyResults() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        return ResponseEntity.ok(testResultService.getMyResults(username));
     }
 
     @GetMapping("/performed-by/{performedById}")
@@ -94,6 +98,6 @@ public class TestResultController {
 
     @GetMapping("/check-test/{testId}")
     public ResponseEntity<Boolean> existsByTestId(@PathVariable Long testId) {
-        return ResponseEntity.ok(testResultService.existsByTestId(testId));
+        return ResponseEntity.ok(testResultService.findByTestId(testId).isPresent());
     }
 } 

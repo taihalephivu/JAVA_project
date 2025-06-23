@@ -81,4 +81,29 @@ public class TestResultServiceImpl implements TestResultService {
     public boolean existsByTestId(Long testId) {
         return testResultRepository.existsByTestId(testId);
     }
+
+    @Override
+    public TestResult save(TestResult testResult) {
+        return testResultRepository.save(testResult);
+    }
+
+    @Override
+    public Optional<TestResult> findById(Long id) {
+        return testResultRepository.findById(id);
+    }
+
+    @Override
+    public List<TestResult> findAll() {
+        return testResultRepository.findAll();
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        testResultRepository.deleteById(id);
+    }
+
+    @Override
+    public List<TestResult> getMyResults(String username) {
+        return testResultRepository.findByTest_User_Username(username);
+    }
 } 
