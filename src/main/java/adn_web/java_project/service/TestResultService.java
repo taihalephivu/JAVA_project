@@ -19,4 +19,5 @@ public interface TestResultService {
     List<TestResult> findAll();
     void deleteById(Long id);
     List<TestResult> getMyResults(String username);
+    Optional<TestResult> findByTestId(Long testId);
 } 

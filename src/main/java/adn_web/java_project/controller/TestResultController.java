@@ -28,14 +28,14 @@ public class TestResultController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> createTestResult(@RequestBody TestResult testResult) {
         TestResult createdTestResult = testResultService.save(testResult);
         return ResponseEntity.status(201).body(createdTestResult);
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> updateTestResult(@PathVariable Long id, @RequestBody TestResult testResult) {
         return testResultService.findById(id)
                 .map(existingResult -> {
@@ -57,7 +57,7 @@ public class TestResultController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<TestResult>> getAllTestResults() {
         return ResponseEntity.ok(testResultService.findAll());
     }

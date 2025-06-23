@@ -25,14 +25,14 @@ public class PostController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> createPost(/*@RequestBody PostRequestDTO postRequestDTO*/) {
+    public ResponseEntity<?> createPost() {
         // TODO: Implement service call
         return ResponseEntity.status(201).build();
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> updatePost(@PathVariable Long id, /*@RequestBody PostRequestDTO postRequestDTO*/) {
+    public ResponseEntity<?> updatePost(@PathVariable Long id) {
         // TODO: Implement service call
         return ResponseEntity.ok().build();
     }

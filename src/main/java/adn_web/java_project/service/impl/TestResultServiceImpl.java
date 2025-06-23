@@ -106,4 +106,9 @@ public class TestResultServiceImpl implements TestResultService {
     public List<TestResult> getMyResults(String username) {
         return testResultRepository.findByTest_User_Username(username);
     }
+
+    @Override
+    public Optional<TestResult> findByTestId(Long testId) {
+        return testResultRepository.findByTestId(testId);
+    }
 } 

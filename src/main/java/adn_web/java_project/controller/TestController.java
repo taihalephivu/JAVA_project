@@ -132,7 +132,7 @@ public class TestController {
     }
 
     @PutMapping("/{id}/status")
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF', 'CUSTOMER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER')")
     public ResponseEntity<?> updateTestStatus(
             @PathVariable Long id,
             @RequestParam TestStatus status) {
@@ -147,7 +147,7 @@ public class TestController {
     }
 
     @PutMapping("/{id}/payment-status")
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> updatePaymentStatus(
             @PathVariable Long id,
             @RequestParam PaymentStatus status) {
@@ -162,7 +162,7 @@ public class TestController {
     }
 
     @GetMapping("/my-tests")
-    @PreAuthorize("hasAnyRole('CUSTOMER', 'STAFF', 'MANAGER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER')")
     public ResponseEntity<Page<Test>> getMyTests(Pageable pageable) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUsername = authentication.getName();
@@ -170,7 +170,7 @@ public class TestController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF', 'MANAGER')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Page<Test>> getAllTests(Pageable pageable) {
         Page<Test> tests = testService.findAll(pageable);
         return ResponseEntity.ok(tests);
