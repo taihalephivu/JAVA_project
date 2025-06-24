@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import MainLayout from './components/MainLayout';
 import Home from './pages/public/Home';
 import About from './pages/public/About';
@@ -23,7 +23,6 @@ import TestResultDetail from './pages/testResults/TestResultDetail';
 import UserList from './pages/users/UserList';
 import UserDetail from './pages/users/UserDetail';
 import Profile from './pages/profile/Profile';
-import ProtectedRoute from './components/ProtectedRoute';
 import { User } from './types';
 import AdminPostManager from './pages/admin/AdminPostManager';
 import AdminPackageManager from './pages/admin/AdminPackageManager';

@@ -15,7 +15,6 @@ const Home: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const user = getCurrentUser();
-  const isAdmin = user && user.role === 'ROLE_ADMIN';
 
   useEffect(() => {
     const fetchPosts = async () => {
