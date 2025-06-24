@@ -44,4 +44,29 @@ export interface TestResult {
   performedAt: string;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface Notification {
+  id: number;
+  message: string;
+  link: string;
+  read: boolean;
+  createdAt: string;
+}
+
+export interface Post {
+  id: number;
+  title: string;
+  content: string;
+  author: User;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Page<T> {
+  content: T[];
+  totalPages: number;
+  totalElements: number;
+  size: number;
+  number: number;
 } 

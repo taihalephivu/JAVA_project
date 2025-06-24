@@ -22,7 +22,7 @@ export const register = (data: any) => api.post('/auth/signup', data);
 
 // Appointments
 export const getAppointments = (isAdmin = false) =>
-  isAdmin ? api.get('/appointments') : api.get('/appointments/my');
+  isAdmin ? api.get('/appointments') : api.get('/appointments/my-appointments');
 export const getAppointment = (id: string) => api.get(`/appointments/${id}`);
 export const createAppointment = (data: any) => api.post('/appointments', data);
 export const updateAppointment = (id: string, data: any) => api.put(`/appointments/${id}`, data);
@@ -30,7 +30,7 @@ export const deleteAppointment = (id: string) => api.delete(`/appointments/${id}
 
 // Tests
 export const getTests = (isAdmin = false) =>
-  isAdmin ? api.get('/tests') : api.get('/tests/my');
+  isAdmin ? api.get('/tests') : api.get('/tests/my-tests');
 export const getTest = (id: string) => api.get(`/tests/${id}`);
 export const createTest = (data: any) => api.post('/tests', data);
 export const updateTest = (id: string, data: any) => api.put(`/tests/${id}`, data);
@@ -38,7 +38,7 @@ export const deleteTest = (id: string) => api.delete(`/tests/${id}`);
 
 // TestResults
 export const getTestResults = (isAdmin = false) =>
-  isAdmin ? api.get('/test-results') : api.get('/test-results/my');
+  isAdmin ? api.get('/test-results') : api.get('/test-results/my-results');
 export const getTestResult = (id: string) => api.get(`/test-results/${id}`);
 export const createTestResult = (data: any) => api.post('/test-results', data);
 export const updateTestResult = (id: string, data: any) => api.put(`/test-results/${id}`, data);
@@ -52,5 +52,21 @@ export const deleteUser = (id: string) => api.delete(`/users/${id}`);
 // Profile
 export const getProfile = (id: string) => api.get(`/users/${id}`);
 export const updateProfile = (id: string, data: any) => api.put(`/users/${id}`, data);
+
+// Notifications
+export const getNotifications = () => api.get('/notifications');
+export const getUnreadNotificationCount = () => api.get('/notifications/count');
+export const markNotificationAsRead = (id: number) => api.put(`/notifications/${id}/read`);
+export const markAllNotificationsAsRead = () => api.put('/notifications/mark-all-as-read');
+
+// Posts
+export const getPosts = (page: number, size: number) => api.get(`/posts?page=${page}&size=${size}`);
+export const getPost = (id: string) => api.get(`/posts/${id}`);
+export const createPost = (data: { title: string, content: string }) => api.post('/posts', data);
+export const updatePost = (id: string, data: { title: string, content: string }) => api.put(`/posts/${id}`, data);
+export const deletePost = (id: string) => api.delete(`/posts/${id}`);
+
+// Contact
+export const sendContactMessage = (data: { fullName: string, email: string, content: string }) => api.post('/contact', data);
 
 // Thêm các hàm gọi API khác ở đây 
