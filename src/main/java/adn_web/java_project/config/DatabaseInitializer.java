@@ -1,3 +1,6 @@
+// File này đã được vô hiệu hóa để tránh lỗi khi Spring Boot kết nối database.
+// Hibernate sẽ tự động tạo bảng khi backend khởi động.
+
 package adn_web.java_project.config;
 
 import jakarta.annotation.PostConstruct;

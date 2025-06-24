@@ -9,9 +9,16 @@ api.interceptors.request.use(config => {
   if (!config.headers) {
     config.headers = {};
   }
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+  // Không gửi token cho login/signup
+  if (
+    config.url &&
+    !config.url.includes('/auth/login') &&
+    !config.url.includes('/auth/signup')
+  ) {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
   }
   return config;
 });

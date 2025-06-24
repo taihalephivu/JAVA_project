@@ -12,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -54,6 +55,11 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<Map<String, Object>> signup(@RequestBody SignupRequest signupRequest) {
         try {
+            // Log payload nhận được
+            ObjectMapper mapper = new ObjectMapper();
+            System.out.println("[DEBUG] Payload raw: " + mapper.writeValueAsString(signupRequest));
+            System.out.println("[DEBUG] SignupRequest nhận được: " + signupRequest);
+
             if (userService.existsByUsername(signupRequest.getUsername())) {
                 Map<String, Object> response = new HashMap<>();
                 response.put("message", "Tên người dùng đã tồn tại!");
@@ -64,10 +70,7 @@ public class AuthController {
                 response.put("message", "Email đã được sử dụng!");
                 return ResponseEntity.badRequest().body(response);
             }
-            
             User user = userService.createUser(signupRequest);
-
-            // Automatically log in the user after registration
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             signupRequest.getUsername(),
@@ -77,13 +80,13 @@ public class AuthController {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             String token = jwtService.generateToken(userDetails);
-
             Map<String, Object> response = new HashMap<>();
             response.put("token", token);
             response.put("user", user);
             return ResponseEntity.ok(response);
-            
         } catch (Exception e) {
+            System.out.println("[ERROR] Exception in signup: " + e.getMessage());
+            e.printStackTrace(); // Log stacktrace ra console
             Map<String, Object> response = new HashMap<>();
             response.put("message", "Đã xảy ra lỗi trong quá trình đăng ký: " + e.getMessage());
             return ResponseEntity.badRequest().body(response);

@@ -27,7 +27,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import { User } from './types';
 
 // Helper để kiểm tra quyền
-const isAdmin = (user: User | null) => user && (user.role === 'ROLE_ADMIN' || user.role === 'ROLE_STAFF' || user.role === 'ROLE_MANAGER');
+const isAdmin = (user: User | null) => user && user.role === 'ROLE_ADMIN';
 const isCustomer = (user: User | null) => user && user.role === 'ROLE_CUSTOMER';
 
 const App: React.FC = () => {
