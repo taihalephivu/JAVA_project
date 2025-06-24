@@ -55,11 +55,6 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<Map<String, Object>> signup(@RequestBody SignupRequest signupRequest) {
         try {
-            // Log payload nhận được
-            ObjectMapper mapper = new ObjectMapper();
-            System.out.println("[DEBUG] Payload raw: " + mapper.writeValueAsString(signupRequest));
-            System.out.println("[DEBUG] SignupRequest nhận được: " + signupRequest);
-
             if (userService.existsByUsername(signupRequest.getUsername())) {
                 Map<String, Object> response = new HashMap<>();
                 response.put("message", "Tên người dùng đã tồn tại!");
@@ -85,7 +80,6 @@ public class AuthController {
             response.put("user", user);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            System.out.println("[ERROR] Exception in signup: " + e.getMessage());
             e.printStackTrace(); // Log stacktrace ra console
             Map<String, Object> response = new HashMap<>();
             response.put("message", "Đã xảy ra lỗi trong quá trình đăng ký: " + e.getMessage());
