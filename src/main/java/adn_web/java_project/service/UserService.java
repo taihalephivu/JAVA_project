@@ -10,4 +10,5 @@ public interface UserService {
     boolean existsByUsername(String username);
     boolean existsByEmail(String email);
     java.util.List<User> findAllUsers();
+    User save(User user);
 } 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getUser, updateProfile, deleteUser } from '../../api';
+import { getUser, updateUser, deleteUser } from '../../api';
 import { User } from '../../types';
 
 const UserDetail: React.FC = () => {
@@ -46,7 +46,7 @@ const UserDetail: React.FC = () => {
     setError(null);
     setSuccess(null);
     try {
-      await updateProfile(id!, form);
+      await updateUser(id!, form);
       setSuccess('Cập nhật thông tin thành công!');
     } catch (err: any) {
       setError(err.response?.data?.message || 'Cập nhật thông tin thất bại');

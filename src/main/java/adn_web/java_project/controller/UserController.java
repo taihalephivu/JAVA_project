@@ -30,4 +30,22 @@ public class UserController {
         List<User> users = userService.findAllUsers();
         return ResponseEntity.ok(users);
     }
+
+    @GetMapping("/me")
+    public ResponseEntity<User> getCurrentUser(Authentication authentication) {
+        String username = authentication.getName();
+        User user = userService.findByUsername(username);
+        return ResponseEntity.ok(user);
+    }
+
+    @PutMapping("/me")
+    public ResponseEntity<User> updateCurrentUser(@RequestBody Map<String, Object> updates, Authentication authentication) {
+        String username = authentication.getName();
+        User user = userService.findByUsername(username);
+        if (updates.containsKey("fullName")) user.setFullName((String) updates.get("fullName"));
+        if (updates.containsKey("email")) user.setEmail((String) updates.get("email"));
+        if (updates.containsKey("phoneNumber")) user.setPhoneNumber((String) updates.get("phoneNumber"));
+        userService.save(user);
+        return ResponseEntity.ok(user);
+    }
 } 

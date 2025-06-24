@@ -55,10 +55,11 @@ export const deleteTestResult = (id: string) => api.delete(`/test-results/${id}`
 export const getUsers = () => api.get('/users');
 export const getUser = (id: string) => api.get(`/users/${id}`);
 export const deleteUser = (id: string) => api.delete(`/users/${id}`);
+export const updateUser = (id: string, data: any) => api.put(`/users/${id}`, data);
 
 // Profile
-export const getProfile = (id: string) => api.get(`/users/${id}`);
-export const updateProfile = (id: string, data: any) => api.put(`/users/${id}`, data);
+export const getProfile = () => api.get(`/users/me`);
+export const updateProfile = (data: any) => api.put(`/users/me`, data);
 
 // Notifications
 export const getNotifications = () => api.get('/notifications');

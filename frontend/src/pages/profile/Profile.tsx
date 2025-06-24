@@ -2,45 +2,26 @@ import React, { useEffect, useState } from 'react';
 import { getProfile, updateProfile } from '../../api';
 import { User } from '../../types';
 
-function getUserIdFromLocalStorage(): string | null {
-  try {
-    const userStr = localStorage.getItem('user');
-    if (userStr) {
-      const user = JSON.parse(userStr);
-      return user.id?.toString() || null;
-    }
-    // Nếu không có user object, thử decode token (nếu cần)
-    const token = localStorage.getItem('token');
-    if (token) {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      return payload.id?.toString() || null;
-    }
-  } catch {
-    return null;
-  }
-  return null;
-}
-
 const Profile: React.FC = () => {
   const [form, setForm] = useState({ fullName: '', email: '', phoneNumber: '' });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  const userId = getUserIdFromLocalStorage();
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     const fetchProfile = async () => {
       setLoading(true);
       setError(null);
       try {
-        if (!userId) throw new Error('Không tìm thấy thông tin người dùng');
-        const res = await getProfile(userId);
-        const user = res.data as User;
+        const res = await getProfile();
+        const userData = res.data as User;
+        setUser(userData);
         setForm({
-          fullName: user.fullName || '',
-          email: user.email || '',
-          phoneNumber: user.phoneNumber || ''
+          fullName: userData.fullName || '',
+          email: userData.email || '',
+          phoneNumber: userData.phoneNumber || ''
         });
       } catch (err: any) {
         setError(err.response?.data?.message || err.message || 'Không thể tải thông tin cá nhân');
@@ -50,7 +31,7 @@ const Profile: React.FC = () => {
     };
     fetchProfile();
     // eslint-disable-next-line
-  }, [userId]);
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -62,8 +43,7 @@ const Profile: React.FC = () => {
     setError(null);
     setSuccess(null);
     try {
-      if (!userId) throw new Error('Không tìm thấy thông tin người dùng');
-      await updateProfile(userId, form);
+      await updateProfile(form);
       setSuccess('Cập nhật thông tin thành công!');
     } catch (err: any) {
       setError(err.response?.data?.message || err.message || 'Cập nhật thông tin thất bại');

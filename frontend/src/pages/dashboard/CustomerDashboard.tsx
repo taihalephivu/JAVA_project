@@ -12,26 +12,26 @@ const CustomerDashboard: React.FC = () => (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 24 }}>
             <a href="/appointments" style={{ textDecoration: 'none', color: 'inherit' }}>
                 <div style={{ background: '#fff', borderRadius: 12, padding: 24, boxShadow: '0 4px 24px rgba(0,0,0,0.05)', transition: 'all 0.2s ease-in-out', cursor: 'pointer' }}>
-                    <h3 style={{ color: '#1976d2', marginTop: 0 }}>📅 Quản lý Lịch hẹn</h3>
-                    <p style={{ color: '#666' }}>Xem danh sách, tạo lịch hẹn mới và theo dõi trạng thái các lịch hẹn của bạn.</p>
+                    <h3 style={{ color: '#1976d2', marginTop: 0 }}>📅 Lịch hẹn của tôi</h3>
+                    <p style={{ color: '#666' }}>Xem, tạo mới và quản lý các lịch hẹn cá nhân của bạn.</p>
                 </div>
             </a>
             <a href="/tests" style={{ textDecoration: 'none', color: 'inherit' }}>
                 <div style={{ background: '#fff', borderRadius: 12, padding: 24, boxShadow: '0 4px 24px rgba(0,0,0,0.05)', transition: 'all 0.2s ease-in-out', cursor: 'pointer' }}>
-                    <h3 style={{ color: '#1976d2', marginTop: 0 }}>🧪 Quản lý Xét nghiệm</h3>
-                    <p style={{ color: '#666' }}>Theo dõi các mẫu xét nghiệm và trạng thái xử lý của chúng.</p>
+                    <h3 style={{ color: '#1976d2', marginTop: 0 }}>🧪 Xét nghiệm của tôi</h3>
+                    <p style={{ color: '#666' }}>Theo dõi tiến trình và trạng thái các mẫu xét nghiệm của bạn.</p>
                 </div>
             </a>
             <a href="/test-results" style={{ textDecoration: 'none', color: 'inherit' }}>
                 <div style={{ background: '#fff', borderRadius: 12, padding: 24, boxShadow: '0 4px 24px rgba(0,0,0,0.05)', transition: 'all 0.2s ease-in-out', cursor: 'pointer' }}>
-                    <h3 style={{ color: '#1976d2', marginTop: 0 }}>📄 Xem Kết quả</h3>
-                    <p style={{ color: '#666' }}>Truy cập và xem chi tiết kết quả các xét nghiệm đã hoàn thành.</p>
+                    <h3 style={{ color: '#1976d2', marginTop: 0 }}>📄 Kết quả xét nghiệm</h3>
+                    <p style={{ color: '#666' }}>Xem chi tiết kết quả các xét nghiệm đã hoàn thành.</p>
                 </div>
             </a>
             <a href="/profile" style={{ textDecoration: 'none', color: 'inherit' }}>
                 <div style={{ background: '#fff', borderRadius: 12, padding: 24, boxShadow: '0 4px 24px rgba(0,0,0,0.05)', transition: 'all 0.2s ease-in-out', cursor: 'pointer' }}>
-                    <h3 style={{ color: '#1976d2', marginTop: 0 }}>👤 Thông tin Cá nhân</h3>
-                    <p style={{ color: '#666' }}>Cập nhật thông tin liên lạc và các chi tiết cá nhân khác của bạn.</p>
+                    <h3 style={{ color: '#1976d2', marginTop: 0 }}>👤 Hồ sơ cá nhân</h3>
+                    <p style={{ color: '#666' }}>Cập nhật thông tin liên hệ và các chi tiết cá nhân của bạn.</p>
                 </div>
             </a>
         </div>
