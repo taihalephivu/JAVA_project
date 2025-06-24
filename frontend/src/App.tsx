@@ -103,6 +103,8 @@ const App: React.FC = () => {
           <Route path="/admin/test-results/:id" element={<AdminRoute><TestResultDetail /></AdminRoute>} />
           <Route path="/users" element={<AdminRoute><UserList /></AdminRoute>} />
           <Route path="/users/:id" element={<AdminRoute><UserDetail /></AdminRoute>} />
+          <Route path="/admin/posts" element={<AdminRoute><Posts /></AdminRoute>} />
+          <Route path="/admin/packages" element={<AdminRoute><Packages /></AdminRoute>} />
           {/* Fallback */}
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
