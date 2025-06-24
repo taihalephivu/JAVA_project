@@ -25,6 +25,8 @@ import UserDetail from './pages/users/UserDetail';
 import Profile from './pages/profile/Profile';
 import ProtectedRoute from './components/ProtectedRoute';
 import { User } from './types';
+import AdminPostManager from './pages/admin/AdminPostManager';
+import AdminPackageManager from './pages/admin/AdminPackageManager';
 
 // Helper để kiểm tra quyền
 const isAdmin = (user: User | null) => user && user.role === 'ROLE_ADMIN';
@@ -103,8 +105,8 @@ const App: React.FC = () => {
           <Route path="/admin/test-results/:id" element={<AdminRoute><TestResultDetail /></AdminRoute>} />
           <Route path="/users" element={<AdminRoute><UserList /></AdminRoute>} />
           <Route path="/users/:id" element={<AdminRoute><UserDetail /></AdminRoute>} />
-          <Route path="/admin/posts" element={<AdminRoute><Posts /></AdminRoute>} />
-          <Route path="/admin/packages" element={<AdminRoute><Packages /></AdminRoute>} />
+          <Route path="/admin/posts" element={<AdminRoute><AdminPostManager /></AdminRoute>} />
+          <Route path="/admin/packages" element={<AdminRoute><AdminPackageManager /></AdminRoute>} />
           {/* Fallback */}
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
