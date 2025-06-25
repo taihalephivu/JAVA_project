@@ -69,4 +69,15 @@ export interface Page<T> {
   totalElements: number;
   size: number;
   number: number;
+}
+
+export interface TestPackage {
+  id?: number;
+  name: string;
+  description: string;
+  price: number;
+  features: string[];
+  icon?: string;
+  createdAt?: string;
+  updatedAt?: string;
 } 

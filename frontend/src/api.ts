@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { TestPackage } from './types';
 
 const api = axios.create({
   baseURL: 'http://localhost:8080/api',
@@ -15,9 +16,9 @@ api.interceptors.request.use(config => {
     !config.url.includes('/auth/login') &&
     !config.url.includes('/auth/signup')
   ) {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
     }
   }
   return config;
@@ -76,5 +77,45 @@ export const deletePost = (id: string) => api.delete(`/posts/${id}`);
 
 // Contact
 export const sendContactMessage = (data: { fullName: string, email: string, content: string }) => api.post('/contact', data);
+
+// TestPackage API
+export async function getPackages() {
+  return fetch('/api/packages').then(res => res.json());
+}
+
+export async function getPackage(id: number) {
+  return fetch(`/api/packages/${id}`).then(res => res.json());
+}
+
+export async function createPackage(pkg: TestPackage, token: string) {
+  return fetch('/api/packages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify(pkg),
+  }).then(res => res.json());
+}
+
+export async function updatePackage(id: number, pkg: TestPackage, token: string) {
+  return fetch(`/api/packages/${id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify(pkg),
+  }).then(res => res.json());
+}
+
+export async function deletePackage(id: number, token: string) {
+  return fetch(`/api/packages/${id}`, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+}
 
 // Thêm các hàm gọi API khác ở đây 
