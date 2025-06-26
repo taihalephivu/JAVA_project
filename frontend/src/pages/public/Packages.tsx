@@ -19,14 +19,19 @@ const Packages: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    setLoading(true);
-    getPackages()
-      .then(data => {
-        setPackages(data);
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const data = await getPackages();
+        setPackages(data as TestPackage[]);
         setError(null);
-      })
-      .catch(() => setError('Không thể tải danh sách gói xét nghiệm.'))
-      .finally(() => setLoading(false));
+      } catch {
+        setError('Không thể tải danh sách gói xét nghiệm.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
   }, []);
 
   return (

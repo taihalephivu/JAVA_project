@@ -79,43 +79,14 @@ export const deletePost = (id: string) => api.delete(`/posts/${id}`);
 export const sendContactMessage = (data: { fullName: string, email: string, content: string }) => api.post('/contact', data);
 
 // TestPackage API
-export async function getPackages() {
-  return fetch('/api/packages').then(res => res.json());
-}
+export const getPackages = () => api.get('/packages').then(res => res.data);
 
-export async function getPackage(id: number) {
-  return fetch(`/api/packages/${id}`).then(res => res.json());
-}
+export const getPackage = (id: number) => api.get(`/packages/${id}`).then(res => res.data);
 
-export async function createPackage(pkg: TestPackage, token: string) {
-  return fetch('/api/packages', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-    },
-    body: JSON.stringify(pkg),
-  }).then(res => res.json());
-}
+export const createPackage = (pkg: TestPackage) => api.post('/packages', pkg).then(res => res.data);
 
-export async function updatePackage(id: number, pkg: TestPackage, token: string) {
-  return fetch(`/api/packages/${id}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-    },
-    body: JSON.stringify(pkg),
-  }).then(res => res.json());
-}
+export const updatePackage = (id: number, pkg: TestPackage) => api.put(`/packages/${id}`, pkg).then(res => res.data);
 
-export async function deletePackage(id: number, token: string) {
-  return fetch(`/api/packages/${id}`, {
-    method: 'DELETE',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-    },
-  });
-}
+export const deletePackage = (id: number) => api.delete(`/packages/${id}`);
 
 // Thêm các hàm gọi API khác ở đây 
