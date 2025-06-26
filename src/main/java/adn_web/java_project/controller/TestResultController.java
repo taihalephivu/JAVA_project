@@ -30,7 +30,7 @@ public class TestResultController {
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> createTestResult(@RequestBody TestResult testResult) {
-        TestResult createdTestResult = testResultService.save(testResult);
+        TestResult createdTestResult = testResultService.createTestResult(testResult);
         return ResponseEntity.status(201).body(createdTestResult);
     }
 

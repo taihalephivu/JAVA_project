@@ -1,8 +1,13 @@
 package adn_web.java_project.service.impl;
 
+import adn_web.java_project.model.Test;
 import adn_web.java_project.model.TestResult;
+import adn_web.java_project.model.TestStatus;
+import adn_web.java_project.repository.TestRepository;
 import adn_web.java_project.repository.TestResultRepository;
 import adn_web.java_project.service.TestResultService;
+import adn_web.java_project.service.NotificationService;
+import adn_web.java_project.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,18 +21,40 @@ import java.util.Optional;
 public class TestResultServiceImpl implements TestResultService {
 
     private final TestResultRepository testResultRepository;
+    private final TestRepository testRepository;
+    private final NotificationService notificationService;
 
     @Autowired
-    public TestResultServiceImpl(TestResultRepository testResultRepository) {
+    public TestResultServiceImpl(TestResultRepository testResultRepository, TestRepository testRepository, NotificationService notificationService) {
         this.testResultRepository = testResultRepository;
+        this.testRepository = testRepository;
+        this.notificationService = notificationService;
     }
 
     @Override
     public TestResult createTestResult(TestResult testResult) {
-        if (testResultRepository.existsByTestId(testResult.getTest().getId())) {
-            throw new RuntimeException("Test result already exists for test with id: " + testResult.getTest().getId());
-        }
-        return testResultRepository.save(testResult);
+        testResult.setPerformedAt(LocalDateTime.now());
+        TestResult savedResult = testResultRepository.save(testResult);
+
+        Test test = testRepository.findById(savedResult.getTest().getId())
+                .orElseThrow(() -> new RuntimeException("Test not found with id: " + savedResult.getTest().getId()));
+
+        test.setStatus(TestStatus.COMPLETED);
+        test.setActualCompletionDate(LocalDateTime.now());
+        testRepository.save(test);
+
+        // Gửi thông báo cho user
+        User user = test.getUser();
+        notificationService.createNotification(
+            user,
+            String.format("Kết quả xét nghiệm %s (%s) của bạn đã có. Vui lòng kiểm tra kết quả.",
+                test.getSampleCode(),
+                test.getTestTypeName()
+            ),
+            "/tests/" + test.getId()
+        );
+
+        return savedResult;
     }
 
     @Override
@@ -41,7 +68,21 @@ public class TestResultServiceImpl implements TestResultService {
         existingTestResult.setPerformedBy(testResult.getPerformedBy());
         existingTestResult.setPerformedAt(testResult.getPerformedAt());
 
-        return testResultRepository.save(existingTestResult);
+        TestResult updated = testResultRepository.save(existingTestResult);
+
+        // Gửi thông báo cho user
+        Test test = existingTestResult.getTest();
+        User user = test.getUser();
+        notificationService.createNotification(
+            user,
+            String.format("Kết quả xét nghiệm %s (%s) của bạn đã được cập nhật. Vui lòng kiểm tra lại kết quả.",
+                test.getSampleCode(),
+                test.getTestTypeName()
+            ),
+            "/tests/" + test.getId()
+        );
+
+        return updated;
     }
 
     @Override

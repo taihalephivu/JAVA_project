@@ -15,10 +15,8 @@ import AppointmentList from './pages/appointments/AppointmentList';
 import AppointmentForm from './pages/appointments/AppointmentForm';
 import AppointmentDetail from './pages/appointments/AppointmentDetail';
 import TestList from './pages/tests/TestList';
-import TestForm from './pages/tests/TestForm';
 import TestDetail from './pages/tests/TestDetail';
 import TestResultList from './pages/testResults/TestResultList';
-import TestResultForm from './pages/testResults/TestResultForm';
 import TestResultDetail from './pages/testResults/TestResultDetail';
 import UserList from './pages/users/UserList';
 import UserDetail from './pages/users/UserDetail';
@@ -97,7 +95,6 @@ const App: React.FC = () => {
           <Route path="/admin/appointments/new" element={<AdminRoute><AppointmentForm /></AdminRoute>} />
           <Route path="/admin/appointments/:id" element={<AdminRoute><AppointmentDetail /></AdminRoute>} />
           <Route path="/admin/tests" element={<AdminRoute><TestList /></AdminRoute>} />
-          <Route path="/admin/tests/new" element={<AdminRoute><TestForm /></AdminRoute>} />
           <Route path="/admin/tests/:id" element={<AdminRoute><TestDetail /></AdminRoute>} />
           <Route path="/admin/test-results" element={<AdminRoute><TestResultList /></AdminRoute>} />
           <Route path="/admin/test-results/:id" element={<AdminRoute><TestResultDetail /></AdminRoute>} />

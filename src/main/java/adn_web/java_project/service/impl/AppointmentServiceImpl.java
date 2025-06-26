@@ -10,6 +10,9 @@ import adn_web.java_project.repository.AppointmentRepository;
 import adn_web.java_project.repository.TestPackageRepository;
 import adn_web.java_project.repository.TestRepository;
 import adn_web.java_project.service.AppointmentService;
+import adn_web.java_project.service.NotificationService;
+import adn_web.java_project.model.User;
+import adn_web.java_project.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,21 +30,38 @@ public class AppointmentServiceImpl implements AppointmentService {
     private final AppointmentRepository appointmentRepository;
     private final TestRepository testRepository;
     private final TestPackageRepository testPackageRepository;
+    private final NotificationService notificationService;
+    private final UserRepository userRepository;
 
     @Autowired
-    public AppointmentServiceImpl(AppointmentRepository appointmentRepository, TestRepository testRepository, TestPackageRepository testPackageRepository) {
+    public AppointmentServiceImpl(AppointmentRepository appointmentRepository, TestRepository testRepository, TestPackageRepository testPackageRepository, NotificationService notificationService, UserRepository userRepository) {
         this.appointmentRepository = appointmentRepository;
         this.testRepository = testRepository;
         this.testPackageRepository = testPackageRepository;
+        this.notificationService = notificationService;
+        this.userRepository = userRepository;
     }
 
     @Override
     public Appointment createAppointment(Appointment appointment) {
-        // Validate appointment date is in the future
         if (appointment.getAppointmentDate().isBefore(LocalDateTime.now())) {
             throw new RuntimeException("Appointment date must be in the future");
         }
-        return appointmentRepository.save(appointment);
+        Appointment saved = appointmentRepository.save(appointment);
+        // Gửi thông báo cho tất cả admin
+        List<User> admins = userRepository.findAll().stream().filter(u -> u.getRole().name().equals("ROLE_ADMIN")).toList();
+        for (User admin : admins) {
+            notificationService.createNotification(
+                admin,
+                String.format("Người dùng %s vừa tạo lịch hẹn mới: %s vào lúc %s.",
+                    appointment.getUser().getFullName(),
+                    appointment.getTestTypeName(),
+                    appointment.getAppointmentDate().toString()
+                ),
+                "/admin/appointments"
+            );
+        }
+        return saved;
     }
 
     @Override
@@ -121,28 +141,31 @@ public class AppointmentServiceImpl implements AppointmentService {
         Appointment appointment = appointmentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Appointment not found with id: " + id));
         appointment.setStatus(status);
-
         if (status == AppointmentStatus.CONFIRMED) {
             TestPackage testPackage = testPackageRepository.findByName(appointment.getTestTypeName())
                     .orElseThrow(() -> new RuntimeException("Test package not found: " + appointment.getTestTypeName()));
-
             Test test = new Test();
             test.setUser(appointment.getUser());
             test.setTestTypeName(appointment.getTestTypeName());
-
             String sampleCode;
             do {
                 sampleCode = java.util.UUID.randomUUID().toString().substring(0, 8).toUpperCase();
             } while (testRepository.existsBySampleCode(sampleCode));
             test.setSampleCode(sampleCode);
-
             test.setStatus(TestStatus.PENDING);
             test.setPaymentStatus(PaymentStatus.PENDING);
             test.setTotalAmount(testPackage.getPrice());
-
             testRepository.save(test);
+            // Gửi thông báo cho user
+            notificationService.createNotification(
+                appointment.getUser(),
+                String.format("Lịch hẹn %s của bạn vào lúc %s đã được admin xác nhận.",
+                    appointment.getTestTypeName(),
+                    appointment.getAppointmentDate().toString()
+                ),
+                "/appointments"
+            );
         }
-
         return appointmentRepository.save(appointment);
     }
 

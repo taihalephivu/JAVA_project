@@ -27,10 +27,7 @@ const TestDetail: React.FC = () => {
   const [test, setTest] = useState<Test | null>(null);
   const [form, setForm] = useState({ sampleCode: '', testTypeName: '', status: '', totalAmount: '', paymentStatus: '' });
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
   const navigate = useNavigate();
   const role = getUserRole();
   const isAdmin = role === 'ROLE_ADMIN';
@@ -76,39 +73,6 @@ const TestDetail: React.FC = () => {
     };
     fetchData();
   }, [id]);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSaving(true);
-    setError(null);
-    setSuccess(null);
-    try {
-      await updateTest(id!, { ...form, totalAmount: Number(form.totalAmount) });
-      setSuccess('Cập nhật xét nghiệm thành công!');
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Cập nhật xét nghiệm thất bại');
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const handleDelete = async () => {
-    if (!window.confirm('Bạn có chắc chắn muốn xóa xét nghiệm này?')) return;
-    setDeleting(true);
-    setError(null);
-    try {
-      await deleteTest(id!);
-      navigate('/tests');
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Xóa xét nghiệm thất bại');
-    } finally {
-      setDeleting(false);
-    }
-  };
 
   if (loading) return <div>Đang tải...</div>;
   if (error) return <div style={{ color: 'red' }}>{error}</div>;

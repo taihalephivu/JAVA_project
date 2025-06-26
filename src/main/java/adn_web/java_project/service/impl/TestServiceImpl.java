@@ -5,6 +5,9 @@ import adn_web.java_project.model.TestStatus;
 import adn_web.java_project.model.PaymentStatus;
 import adn_web.java_project.repository.TestRepository;
 import adn_web.java_project.service.TestService;
+import adn_web.java_project.service.NotificationService;
+import adn_web.java_project.model.User;
+import adn_web.java_project.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,10 +23,14 @@ import java.util.Optional;
 public class TestServiceImpl implements TestService {
 
     private final TestRepository testRepository;
+    private final NotificationService notificationService;
+    private final UserRepository userRepository;
 
     @Autowired
-    public TestServiceImpl(TestRepository testRepository) {
+    public TestServiceImpl(TestRepository testRepository, NotificationService notificationService, UserRepository userRepository) {
         this.testRepository = testRepository;
+        this.notificationService = notificationService;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -53,9 +60,26 @@ public class TestServiceImpl implements TestService {
         existingTest.setActualCompletionDate(test.getActualCompletionDate());
         existingTest.setStatus(test.getStatus());
         existingTest.setTotalAmount(test.getTotalAmount());
+        PaymentStatus oldStatus = existingTest.getPaymentStatus();
         existingTest.setPaymentStatus(test.getPaymentStatus());
 
-        return testRepository.save(existingTest);
+        Test saved = testRepository.save(existingTest);
+        // Nếu vừa chuyển sang PAID thì gửi thông báo cho admin
+        if (oldStatus != PaymentStatus.PAID && test.getPaymentStatus() == PaymentStatus.PAID) {
+            List<User> admins = userRepository.findAll().stream().filter(u -> u.getRole().name().equals("ROLE_ADMIN")).toList();
+            for (User admin : admins) {
+                notificationService.createNotification(
+                    admin,
+                    String.format("Người dùng %s vừa thanh toán cho xét nghiệm %s (%s).",
+                        existingTest.getUser().getFullName(),
+                        existingTest.getSampleCode(),
+                        existingTest.getTestTypeName()
+                    ),
+                    "/admin/tests/" + existingTest.getId()
+                );
+            }
+        }
+        return saved;
     }
 
     @Override

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getTestResult, updateTestResult, deleteTestResult } from '../../api';
+import { getTestResult, updateTestResult, deleteTestResult, updateTest } from '../../api';
 import { TestResult } from '../../types';
 
 function getUserRole(): string | null {
@@ -30,6 +30,7 @@ const TestResultDetail: React.FC = () => {
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [paying, setPaying] = useState(false);
   const navigate = useNavigate();
   const role = getUserRole();
   const isAdmin = role === 'ROLE_ADMIN';
@@ -88,6 +89,23 @@ const TestResultDetail: React.FC = () => {
     }
   };
 
+  const handlePayment = async () => {
+    if (!result) return;
+    setPaying(true);
+    setError(null);
+    setSuccess(null);
+    try {
+      await updateTest(result.test.id.toString(), { ...result.test, paymentStatus: 'PAID' });
+      setSuccess('Thanh toán thành công!');
+      const res = await getTestResult(id!);
+      setResult(res.data as TestResult);
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Thanh toán thất bại');
+    } finally {
+      setPaying(false);
+    }
+  };
+
   return (
     <div style={{ maxWidth: 600, margin: '0 auto', background: '#fff', borderRadius: 12, boxShadow: '0 4px 24px #0001', padding: 32 }}>
       <h2 style={{ color: '#1976d2', marginBottom: 16 }}>Chi tiết kết quả xét nghiệm</h2>
@@ -117,6 +135,13 @@ const TestResultDetail: React.FC = () => {
             <div><b>Kết quả:</b> {result.resultData}</div>
             <div><b>Diễn giải:</b> {result.interpretation}</div>
             <div><b>Khuyến nghị:</b> {result.recommendations}</div>
+            {result.test?.paymentStatus === 'PENDING' && (
+              <button onClick={handlePayment} disabled={paying} style={{ background: '#1976d2', color: '#fff', padding: '10px 24px', borderRadius: 6, fontWeight: 600, fontSize: 16, border: 'none', cursor: 'pointer', marginTop: 16 }}>
+                {paying ? 'Đang thanh toán...' : 'Thanh toán'}
+              </button>
+            )}
+            {success && <div style={{ color: 'green', textAlign: 'center', marginTop: 12 }}>{success}</div>}
+            {error && <div style={{ color: 'red', textAlign: 'center', marginTop: 12 }}>{error}</div>}
           </div>
         )
       ) : (
