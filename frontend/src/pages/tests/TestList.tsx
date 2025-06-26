@@ -69,7 +69,9 @@ const TestList: React.FC = () => {
                 <td style={{ padding: 10 }}>{t.id}</td>
                 <td style={{ padding: 10 }}>{t.sampleCode}</td>
                 <td style={{ padding: 10 }}>{t.status}</td>
-                <td style={{ padding: 10 }}><a href={`/tests/${t.id}`} style={{ color: '#1976d2', fontWeight: 600 }}>Xem chi tiết</a></td>
+                <td style={{ padding: 10 }}>
+                  <a href={isAdmin ? `/admin/tests/${t.id}` : `/tests/${t.id}`} style={{ color: '#1976d2', fontWeight: 600 }}>Xem chi tiết</a>
+                </td>
               </tr>
             ))}
           </tbody>

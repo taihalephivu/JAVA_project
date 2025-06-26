@@ -100,7 +100,6 @@ const App: React.FC = () => {
           <Route path="/admin/tests/new" element={<AdminRoute><TestForm /></AdminRoute>} />
           <Route path="/admin/tests/:id" element={<AdminRoute><TestDetail /></AdminRoute>} />
           <Route path="/admin/test-results" element={<AdminRoute><TestResultList /></AdminRoute>} />
-          <Route path="/admin/test-results/new" element={<AdminRoute><TestResultForm /></AdminRoute>} />
           <Route path="/admin/test-results/:id" element={<AdminRoute><TestResultDetail /></AdminRoute>} />
           <Route path="/users" element={<AdminRoute><UserList /></AdminRoute>} />
           <Route path="/users/:id" element={<AdminRoute><UserDetail /></AdminRoute>} />

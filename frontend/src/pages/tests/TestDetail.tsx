@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getTest, updateTest, deleteTest } from '../../api';
-import { Test } from '../../types';
+import { getTest, updateTest, deleteTest, checkIfTestResultExists, getTestResultByTestId } from '../../api';
+import { Test, TestResult } from '../../types';
+import TestResultForm from '../testResults/TestResultForm';
 
 function getUserRole(): string | null {
   try {
@@ -34,27 +35,46 @@ const TestDetail: React.FC = () => {
   const role = getUserRole();
   const isAdmin = role === 'ROLE_ADMIN';
 
+  // State for result check
+  const [resultExists, setResultExists] = useState(false);
+  const [result, setResult] = useState<TestResult | null>(null);
+  const [loadingResult, setLoadingResult] = useState(true);
+
   useEffect(() => {
     const fetchData = async () => {
+      if (!id) return;
       setLoading(true);
+      setLoadingResult(true);
       setError(null);
       try {
-        const res = await getTest(id!);
-        setTest(res.data as Test);
+        // Fetch test details
+        const testRes = await getTest(id);
+        setTest(testRes.data as Test);
         setForm({
-          sampleCode: (res.data as Test).sampleCode || '',
-          testTypeName: (res.data as Test).testTypeName || '',
-          status: (res.data as Test).status || '',
-          totalAmount: (res.data as Test).totalAmount?.toString() || '',
-          paymentStatus: (res.data as Test).paymentStatus || ''
+          sampleCode: (testRes.data as Test).sampleCode || '',
+          testTypeName: (testRes.data as Test).testTypeName || '',
+          status: (testRes.data as Test).status || '',
+          totalAmount: (testRes.data as Test).totalAmount?.toString() || '',
+          paymentStatus: (testRes.data as Test).paymentStatus || ''
         });
+
+        // Check if result exists
+        const resultCheckRes = await checkIfTestResultExists(id);
+        const exists = resultCheckRes.data as boolean;
+        setResultExists(exists);
+
+        if (exists) {
+          const testResultRes = await getTestResultByTestId(id);
+          setResult(testResultRes.data as TestResult);
+        }
       } catch (err: any) {
-        setError(err.response?.data?.message || 'Không thể tải chi tiết xét nghiệm');
+        setError(err.response?.data?.message || 'Không thể tải dữ liệu');
       } finally {
         setLoading(false);
+        setLoadingResult(false);
       }
     };
-    if (id) fetchData();
+    fetchData();
   }, [id]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -90,54 +110,38 @@ const TestDetail: React.FC = () => {
     }
   };
 
+  if (loading) return <div>Đang tải...</div>;
+  if (error) return <div style={{ color: 'red' }}>{error}</div>;
+  if (!test) return <div>Không tìm thấy xét nghiệm.</div>;
+
   return (
-    <div style={{ maxWidth: 600, margin: '0 auto', background: '#fff', borderRadius: 12, boxShadow: '0 4px 24px #0001', padding: 32 }}>
+    <div style={{ maxWidth: 700, margin: '0 auto', background: '#fff', borderRadius: 12, boxShadow: '0 4px 24px #0001', padding: 32 }}>
       <h2 style={{ color: '#1976d2', marginBottom: 16 }}>Chi tiết xét nghiệm</h2>
-      {loading ? (
-        <div>Đang tải...</div>
-      ) : error ? (
-        <div style={{ color: 'red' }}>{error}</div>
-      ) : test ? (
-        isAdmin ? (
-          <form onSubmit={handleSubmit} style={{ fontSize: 16, marginBottom: 18, display: 'flex', flexDirection: 'column', gap: 16 }}>
-            <div><b>Mã xét nghiệm:</b> {test.id}</div>
-            <input name="sampleCode" placeholder="Mã mẫu" value={form.sampleCode} onChange={handleChange} required style={{ padding: 10, borderRadius: 6, border: '1px solid #bbb' }} />
-            <input name="testTypeName" placeholder="Loại xét nghiệm" value={form.testTypeName} onChange={handleChange} required style={{ padding: 10, borderRadius: 6, border: '1px solid #bbb' }} />
-            <select name="status" value={form.status} onChange={handleChange} required style={{ padding: 10, borderRadius: 6, border: '1px solid #bbb' }}>
-              <option value="">Chọn trạng thái</option>
-              <option value="PENDING">Chờ xử lý</option>
-              <option value="PROCESSING">Đang xử lý</option>
-              <option value="COMPLETED">Hoàn thành</option>
-              <option value="CANCELLED">Đã hủy</option>
-            </select>
-            <input name="totalAmount" placeholder="Tổng tiền" value={form.totalAmount} onChange={handleChange} required style={{ padding: 10, borderRadius: 6, border: '1px solid #bbb' }} />
-            <select name="paymentStatus" value={form.paymentStatus} onChange={handleChange} required style={{ padding: 10, borderRadius: 6, border: '1px solid #bbb' }}>
-              <option value="">Chọn trạng thái thanh toán</option>
-              <option value="UNPAID">Chờ thanh toán</option>
-              <option value="PAID">Đã thanh toán</option>
-              <option value="REFUNDED">Đã hoàn tiền</option>
-            </select>
-            <div style={{ display: 'flex', gap: 12 }}>
-              <button type="submit" disabled={saving} style={{ background: '#1976d2', color: '#fff', padding: '10px 24px', borderRadius: 6, fontWeight: 600, fontSize: 16, border: 'none', cursor: 'pointer' }}>{saving ? 'Đang lưu...' : 'Lưu thay đổi'}</button>
-              <button type="button" onClick={handleDelete} disabled={deleting} style={{ background: '#d32f2f', color: '#fff', padding: '10px 24px', borderRadius: 6, fontWeight: 600, fontSize: 16, border: 'none', cursor: 'pointer' }}>{deleting ? 'Đang xóa...' : 'Xóa xét nghiệm'}</button>
+      <div style={{ fontSize: 16, marginBottom: 18, borderBottom: '1px solid #eee', paddingBottom: 18 }}>
+        <div><b>Mã xét nghiệm:</b> {test.id}</div>
+        <div><b>Mã mẫu:</b> {test.sampleCode}</div>
+        <div><b>Loại xét nghiệm:</b> {test.testTypeName}</div>
+        <div><b>Trạng thái:</b> {test.status}</div>
+        <div><b>Tổng tiền:</b> {test.totalAmount?.toLocaleString('vi-VN')}đ</div>
+        <div><b>Trạng thái thanh toán:</b> {test.paymentStatus}</div>
+      </div>
+
+      {isAdmin && (
+        <div>
+          {loadingResult ? (
+            <div>Đang kiểm tra kết quả...</div>
+          ) : resultExists && result ? (
+            <div>
+              <h3 style={{ color: '#388e3c' }}>Kết quả đã có</h3>
+              <a href={`/admin/test-results/${result.id}`} style={{ color: '#1976d2', fontWeight: 600 }}>Xem chi tiết kết quả</a>
             </div>
-            {success && <div style={{ color: 'green', textAlign: 'center' }}>{success}</div>}
-            {error && <div style={{ color: 'red', textAlign: 'center' }}>{error}</div>}
-          </form>
-        ) : (
-          <div style={{ fontSize: 16, marginBottom: 18 }}>
-            <div><b>Mã xét nghiệm:</b> {test.id}</div>
-            <div><b>Mã mẫu:</b> {test.sampleCode}</div>
-            <div><b>Loại xét nghiệm:</b> {test.testTypeName}</div>
-            <div><b>Trạng thái:</b> {test.status}</div>
-            <div><b>Tổng tiền:</b> {test.totalAmount?.toLocaleString('vi-VN')}đ</div>
-            <div><b>Trạng thái thanh toán:</b> {test.paymentStatus}</div>
-          </div>
-        )
-      ) : (
-        <div>Không tìm thấy xét nghiệm.</div>
+          ) : (
+            <TestResultForm testId={id!} sampleCode={test.sampleCode} />
+          )}
+        </div>
       )}
-      <a href="/tests" style={{ color: '#1976d2', fontWeight: 600 }}>Quay lại danh sách</a>
+
+      <a href={isAdmin ? "/admin/tests" : "/tests"} style={{ color: '#1976d2', fontWeight: 600, marginTop: 24, display: 'inline-block' }}>Quay lại danh sách</a>
     </div>
   );
 };
