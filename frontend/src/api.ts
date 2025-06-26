@@ -35,6 +35,7 @@ export const getAppointment = (id: string) => api.get(`/appointments/${id}`);
 export const createAppointment = (data: any) => api.post('/appointments', data);
 export const updateAppointment = (id: string, data: any) => api.put(`/appointments/${id}`, data);
 export const deleteAppointment = (id: string) => api.delete(`/appointments/${id}`);
+export const updateAppointmentStatus = (id: string | number, status: string) => api.put(`/appointments/${id}/status`, null, { params: { status } });
 
 // Tests
 export const getTests = (isAdmin = false) =>
@@ -48,9 +49,11 @@ export const deleteTest = (id: string) => api.delete(`/tests/${id}`);
 export const getTestResults = (isAdmin = false) =>
   isAdmin ? api.get('/test-results') : api.get('/test-results/my-results');
 export const getTestResult = (id: string) => api.get(`/test-results/${id}`);
+export const getTestResultByTestId = (testId: string) => api.get(`/test-results/test/${testId}`);
 export const createTestResult = (data: any) => api.post('/test-results', data);
 export const updateTestResult = (id: string, data: any) => api.put(`/test-results/${id}`, data);
 export const deleteTestResult = (id: string) => api.delete(`/test-results/${id}`);
+export const checkIfTestResultExists = (testId: string) => api.get(`/test-results/check-test/${testId}`);
 
 // Users (admin)
 export const getUsers = () => api.get('/users');

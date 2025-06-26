@@ -47,7 +47,9 @@ const AppointmentList: React.FC = () => {
   return (
     <div style={{ maxWidth: 800, margin: '0 auto', background: '#fff', borderRadius: 12, boxShadow: '0 4px 24px #0001', padding: 32 }}>
       <h2 style={{ color: '#1976d2', marginBottom: 16 }}>Danh sách lịch hẹn</h2>
-      <a href="/appointments/new" style={{ background: '#1976d2', color: '#fff', padding: '10px 20px', borderRadius: 6, textDecoration: 'none', fontWeight: 600, float: 'right', marginBottom: 16 }}>Đặt lịch mới</a>
+      {!isAdmin && (
+        <a href="/appointments/new" style={{ background: '#1976d2', color: '#fff', padding: '10px 20px', borderRadius: 6, textDecoration: 'none', fontWeight: 600, float: 'right', marginBottom: 16 }}>Đặt lịch mới</a>
+      )}
       {loading ? (
         <div>Đang tải...</div>
       ) : error ? (
@@ -70,7 +72,9 @@ const AppointmentList: React.FC = () => {
                 <td style={{ padding: 10 }}>{a.id}</td>
                 <td style={{ padding: 10 }}>{a.appointmentDate?.slice(0, 10)}</td>
                 <td style={{ padding: 10 }}>{a.status}</td>
-                <td style={{ padding: 10 }}><a href={`/appointments/${a.id}`} style={{ color: '#1976d2', fontWeight: 600 }}>Xem chi tiết</a></td>
+                <td style={{ padding: 10 }}>
+                  <a href={isAdmin ? `/admin/appointments/${a.id}` : `/appointments/${a.id}`} style={{ color: '#1976d2', fontWeight: 600 }}>Xem chi tiết</a>
+                </td>
               </tr>
             ))}
           </tbody>

@@ -2,7 +2,13 @@ package adn_web.java_project.service.impl;
 
 import adn_web.java_project.model.Appointment;
 import adn_web.java_project.model.AppointmentStatus;
+import adn_web.java_project.model.Test;
+import adn_web.java_project.model.TestPackage;
+import adn_web.java_project.model.TestStatus;
+import adn_web.java_project.model.PaymentStatus;
 import adn_web.java_project.repository.AppointmentRepository;
+import adn_web.java_project.repository.TestPackageRepository;
+import adn_web.java_project.repository.TestRepository;
 import adn_web.java_project.service.AppointmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,10 +25,14 @@ import java.util.Optional;
 public class AppointmentServiceImpl implements AppointmentService {
 
     private final AppointmentRepository appointmentRepository;
+    private final TestRepository testRepository;
+    private final TestPackageRepository testPackageRepository;
 
     @Autowired
-    public AppointmentServiceImpl(AppointmentRepository appointmentRepository) {
+    public AppointmentServiceImpl(AppointmentRepository appointmentRepository, TestRepository testRepository, TestPackageRepository testPackageRepository) {
         this.appointmentRepository = appointmentRepository;
+        this.testRepository = testRepository;
+        this.testPackageRepository = testPackageRepository;
     }
 
     @Override
@@ -111,6 +121,28 @@ public class AppointmentServiceImpl implements AppointmentService {
         Appointment appointment = appointmentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Appointment not found with id: " + id));
         appointment.setStatus(status);
+
+        if (status == AppointmentStatus.CONFIRMED) {
+            TestPackage testPackage = testPackageRepository.findByName(appointment.getTestTypeName())
+                    .orElseThrow(() -> new RuntimeException("Test package not found: " + appointment.getTestTypeName()));
+
+            Test test = new Test();
+            test.setUser(appointment.getUser());
+            test.setTestTypeName(appointment.getTestTypeName());
+
+            String sampleCode;
+            do {
+                sampleCode = java.util.UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+            } while (testRepository.existsBySampleCode(sampleCode));
+            test.setSampleCode(sampleCode);
+
+            test.setStatus(TestStatus.PENDING);
+            test.setPaymentStatus(PaymentStatus.PENDING);
+            test.setTotalAmount(testPackage.getPrice());
+
+            testRepository.save(test);
+        }
+
         return appointmentRepository.save(appointment);
     }
 

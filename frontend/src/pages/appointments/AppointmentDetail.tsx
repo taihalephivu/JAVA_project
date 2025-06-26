@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getAppointment, updateAppointment, deleteAppointment } from '../../api';
+import { getAppointment, updateAppointment, deleteAppointment, updateAppointmentStatus } from '../../api';
 import { Appointment } from '../../types';
 
 function getUserRole(): string | null {
@@ -21,6 +21,14 @@ function getUserRole(): string | null {
   return null;
 }
 
+function getCurrentUser() {
+  try {
+    const userStr = localStorage.getItem('user');
+    if (userStr) return JSON.parse(userStr);
+  } catch {}
+  return null;
+}
+
 const AppointmentDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [appointment, setAppointment] = useState<Appointment | null>(null);
@@ -33,6 +41,9 @@ const AppointmentDetail: React.FC = () => {
   const navigate = useNavigate();
   const role = getUserRole();
   const isAdmin = role === 'ROLE_ADMIN';
+  const [confirming, setConfirming] = useState(false);
+  const currentUser = getCurrentUser();
+  const isOwner = appointment && currentUser && appointment.user && appointment.user.id === currentUser.id;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -89,6 +100,26 @@ const AppointmentDetail: React.FC = () => {
     }
   };
 
+  const handleConfirm = async () => {
+    if (!appointment) return;
+    setConfirming(true);
+    setError(null);
+    setSuccess(null);
+    try {
+      await updateAppointmentStatus(appointment.id, 'CONFIRMED');
+      setSuccess('Lịch hẹn đã được xác nhận và một xét nghiệm mới đã được tạo!');
+      setAppointment({ ...appointment, status: 'CONFIRMED' });
+      setForm({ ...form, status: 'CONFIRMED' });
+      setTimeout(() => {
+        navigate('/admin/tests');
+      }, 1500);
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Xác nhận lịch thất bại');
+    } finally {
+      setConfirming(false);
+    }
+  };
+
   return (
     <div style={{ maxWidth: 600, margin: '0 auto', background: '#fff', borderRadius: 12, boxShadow: '0 4px 24px #0001', padding: 32 }}>
       <h2 style={{ color: '#1976d2', marginBottom: 16 }}>Chi tiết lịch hẹn</h2>
@@ -98,25 +129,25 @@ const AppointmentDetail: React.FC = () => {
         <div style={{ color: 'red' }}>{error}</div>
       ) : appointment ? (
         isAdmin ? (
-          <form onSubmit={handleSubmit} style={{ fontSize: 16, marginBottom: 18, display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <div style={{ fontSize: 16, marginBottom: 18 }}>
             <div><b>Mã lịch hẹn:</b> {appointment.id}</div>
-            <input name="testTypeName" placeholder="Loại xét nghiệm" value={form.testTypeName} onChange={handleChange} required style={{ padding: 10, borderRadius: 6, border: '1px solid #bbb' }} />
-            <input name="appointmentDate" type="date" value={form.appointmentDate} onChange={handleChange} required style={{ padding: 10, borderRadius: 6, border: '1px solid #bbb' }} />
-            <select name="status" value={form.status} onChange={handleChange} required style={{ padding: 10, borderRadius: 6, border: '1px solid #bbb' }}>
-              <option value="">Chọn trạng thái</option>
-              <option value="PENDING">Chờ xác nhận</option>
-              <option value="CONFIRMED">Đã xác nhận</option>
-              <option value="CANCELLED">Đã hủy</option>
-              <option value="COMPLETED">Đã hoàn thành</option>
-            </select>
-            <textarea name="notes" placeholder="Ghi chú" value={form.notes} onChange={handleChange} style={{ padding: 10, borderRadius: 6, border: '1px solid #bbb', minHeight: 60 }} />
-            <div style={{ display: 'flex', gap: 12 }}>
-              <button type="submit" disabled={saving} style={{ background: '#1976d2', color: '#fff', padding: '10px 24px', borderRadius: 6, fontWeight: 600, fontSize: 16, border: 'none', cursor: 'pointer' }}>{saving ? 'Đang lưu...' : 'Lưu thay đổi'}</button>
-              <button type="button" onClick={handleDelete} disabled={deleting} style={{ background: '#d32f2f', color: '#fff', padding: '10px 24px', borderRadius: 6, fontWeight: 600, fontSize: 16, border: 'none', cursor: 'pointer' }}>{deleting ? 'Đang xóa...' : 'Xóa lịch hẹn'}</button>
+            <div><b>Ngày hẹn:</b> {appointment.appointmentDate?.slice(0, 10)}</div>
+            <div><b>Loại xét nghiệm:</b> {appointment.testTypeName}</div>
+            <div><b>Trạng thái:</b> {appointment.status}</div>
+            <div><b>Ghi chú:</b> {appointment.notes || '-'}</div>
+            <div style={{ marginTop: 16, display: 'flex', gap: 12 }}>
+              {appointment.status === 'SCHEDULED' && (
+                <button type="button" onClick={handleConfirm} disabled={confirming} style={{ background: '#388e3c', color: '#fff', padding: '10px 24px', borderRadius: 6, fontWeight: 600, fontSize: 16, border: 'none', cursor: 'pointer' }}>
+                  {confirming ? 'Đang xác nhận...' : 'Xác nhận lịch'}
+                </button>
+              )}
+              <button type="button" onClick={handleDelete} disabled={deleting} style={{ background: '#d32f2f', color: '#fff', padding: '10px 24px', borderRadius: 6, fontWeight: 600, fontSize: 16, border: 'none', cursor: 'pointer' }}>
+                {deleting ? 'Đang xóa...' : 'Xóa lịch hẹn'}
+              </button>
             </div>
             {success && <div style={{ color: 'green', textAlign: 'center' }}>{success}</div>}
             {error && <div style={{ color: 'red', textAlign: 'center' }}>{error}</div>}
-          </form>
+          </div>
         ) : (
           <div style={{ fontSize: 16, marginBottom: 18 }}>
             <div><b>Mã lịch hẹn:</b> {appointment.id}</div>
