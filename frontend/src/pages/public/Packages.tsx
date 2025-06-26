@@ -68,7 +68,7 @@ const Packages: React.FC = () => {
                   boxShadow: '0 2px 8px #1976d233', border: 'none', cursor: 'pointer'
                 }}
                 onClick={() => {
-                  if (user) navigate('/appointments/new');
+                  if (user) navigate('/appointments/new', { state: { testTypeName: pkg.name } });
                   else navigate('/login');
                 }}
                 onMouseOver={e => (e.currentTarget.style.background = '#1565c0')}
