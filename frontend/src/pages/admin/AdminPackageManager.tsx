@@ -43,15 +43,15 @@ const AdminPackageManager: React.FC = () => {
       icon: form.icon || undefined,
     };
     try {
-      if (editingId) {
+    if (editingId) {
         await updatePackage(editingId, pkg);
-      } else {
+    } else {
         await createPackage(pkg);
-      }
+    }
       fetchPackages();
-      setShowForm(false);
+    setShowForm(false);
       setForm({ name: '', description: '', price: '', features: '', icon: '' });
-      setEditingId(null);
+    setEditingId(null);
     } catch (e) {
       setError('Lưu gói xét nghiệm thất bại.');
     } finally {

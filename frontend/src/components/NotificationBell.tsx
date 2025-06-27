@@ -85,7 +85,7 @@ const NotificationBell: React.FC = () => {
             )}
             {isOpen && (
                 <div style={{
-                    position: 'absolute', top: '140%', right: 0, background: 'white', color: '#333',
+                    position: 'absolute', bottom: '140%', right: 0, background: 'white', color: '#333',
                     borderRadius: 8, boxShadow: '0 4px 20px rgba(0,0,0,0.15)', width: 350,
                     zIndex: 1000, border: '1px solid #eee'
                 }}>

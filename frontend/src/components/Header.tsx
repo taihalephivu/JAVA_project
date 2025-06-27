@@ -1,6 +1,5 @@
 import React from 'react';
 import { User } from '../types';
-import NotificationBell from './NotificationBell';
 
 interface HeaderProps {
   user: User | null;
@@ -18,7 +17,6 @@ const Header: React.FC<HeaderProps> = ({ user, onLogout }) => (
       <a href="/contact" style={{ color: '#fff', marginRight: 18 }}>Liên hệ</a>
       {user ? (
         <>
-          <NotificationBell />
           <a href="/dashboard" style={{ color: '#fff', marginRight: 18 }}>Dashboard</a>
           <button onClick={onLogout} style={{ color: '#fff', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600 }}>Đăng xuất</button>
         </>

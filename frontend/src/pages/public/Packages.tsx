@@ -20,7 +20,7 @@ const Packages: React.FC = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true);
+    setLoading(true);
       try {
         const data = await getPackages();
         setPackages(data as TestPackage[]);

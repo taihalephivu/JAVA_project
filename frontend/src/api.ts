@@ -7,9 +7,6 @@ const api = axios.create({
 
 // Đính kèm token vào header nếu có
 api.interceptors.request.use(config => {
-  if (!config.headers) {
-    config.headers = {};
-  }
   // Không gửi token cho login/signup
   if (
     config.url &&
