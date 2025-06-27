@@ -53,7 +53,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         for (User admin : admins) {
             notificationService.createNotification(
                 admin,
-                String.format("Người dùng %s vừa tạo lịch hẹn mới: %s vào lúc %s.",
+                String.format("Người dùng %s vừa tạo lịch hẹn mới.",
                     appointment.getUser().getFullName(),
                     appointment.getTestTypeName(),
                     appointment.getAppointmentDate().toString()
@@ -159,7 +159,7 @@ public class AppointmentServiceImpl implements AppointmentService {
             // Gửi thông báo cho user
             notificationService.createNotification(
                 appointment.getUser(),
-                String.format("Lịch hẹn %s của bạn vào lúc %s đã được admin xác nhận.",
+                String.format("Lịch hẹn %s của bạn đã đượcxác nhận.",
                     appointment.getTestTypeName(),
                     appointment.getAppointmentDate().toString()
                 ),

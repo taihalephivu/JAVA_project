@@ -70,7 +70,7 @@ public class TestServiceImpl implements TestService {
             for (User admin : admins) {
                 notificationService.createNotification(
                     admin,
-                    String.format("Người dùng %s vừa thanh toán cho xét nghiệm %s (%s).",
+                    String.format("Người dùng %s vừa thanh toán thành công.",
                         existingTest.getUser().getFullName(),
                         existingTest.getSampleCode(),
                         existingTest.getTestTypeName()
