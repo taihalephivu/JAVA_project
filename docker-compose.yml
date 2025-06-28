@@ -8,10 +8,19 @@ services:
       - ACCEPT_EULA=Y
       - SA_PASSWORD=Aa@123456
       - MSSQL_PID=Developer
+      - MSSQL_COLLATION=Vietnamese_CI_AS
     ports:
       - "1435:1433"
     volumes:
       - sqlserver_data:/var/opt/mssql
+      - ./init_database.sql:/docker-entrypoint-initdb.d/init_database.sql:ro
+    command: >
+      bash -c "
+        /opt/mssql/bin/sqlservr &
+        sleep 30
+        /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P Aa@123456 -i /docker-entrypoint-initdb.d/init_database.sql
+        wait
+      "
     networks:
       - dna_network
 
@@ -23,9 +32,12 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:sqlserver://sqlserver:1433;databaseName=dna_test_db;encrypt=true;trustServerCertificate=true
+      - SPRING_DATASOURCE_URL=jdbc:sqlserver://sqlserver:1433;databaseName=dna_test_db;encrypt=true;trustServerCertificate=true;characterEncoding=UTF-8;useUnicode=true;sendStringParametersAsUnicode=true
       - SPRING_DATASOURCE_USERNAME=sa
       - SPRING_DATASOURCE_PASSWORD=Aa@123456
+      - SPRING_HTTP_ENCODING_CHARSET=UTF-8
+      - SPRING_HTTP_ENCODING_ENABLED=true
+      - SPRING_HTTP_ENCODING_FORCE=true
     depends_on:
       - sqlserver
     networks:
