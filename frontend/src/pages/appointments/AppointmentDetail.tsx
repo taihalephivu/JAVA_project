@@ -121,46 +121,50 @@ const AppointmentDetail: React.FC = () => {
   };
 
   return (
-    <div style={{ maxWidth: 600, margin: '0 auto', background: '#fff', borderRadius: 12, boxShadow: '0 4px 24px #0001', padding: 32 }}>
-      <h2 style={{ color: '#1976d2', marginBottom: 16 }}>Chi tiết lịch hẹn</h2>
-      {loading ? (
-        <div>Đang tải...</div>
-      ) : error ? (
-        <div style={{ color: 'red' }}>{error}</div>
-      ) : appointment ? (
-        isAdmin ? (
-          <div style={{ fontSize: 16, marginBottom: 18 }}>
-            <div><b>Mã lịch hẹn:</b> {appointment.id}</div>
-            <div><b>Ngày hẹn:</b> {appointment.appointmentDate?.slice(0, 10)}</div>
-            <div><b>Loại xét nghiệm:</b> {appointment.testTypeName}</div>
-            <div><b>Trạng thái:</b> {appointment.status}</div>
-            <div><b>Ghi chú:</b> {appointment.notes || '-'}</div>
-            <div style={{ marginTop: 16, display: 'flex', gap: 12 }}>
-              {appointment.status === 'SCHEDULED' && (
-                <button type="button" onClick={handleConfirm} disabled={confirming} style={{ background: '#388e3c', color: '#fff', padding: '10px 24px', borderRadius: 6, fontWeight: 600, fontSize: 16, border: 'none', cursor: 'pointer' }}>
-                  {confirming ? 'Đang xác nhận...' : 'Xác nhận lịch'}
+    <div style={{ maxWidth: 600, margin: '0 auto', background: 'none', borderRadius: 14, padding: '0 0 32px 0' }}>
+      <div style={{ background: '#e3f0fd', borderTopLeftRadius: 14, borderTopRightRadius: 14, padding: '24px 32px 12px 32px', borderLeft: '6px solid #1976d2', boxShadow: '0 2px 12px #1976d211' }}>
+        <h2 style={{ color: '#1976d2', marginBottom: 0 }}>Chi tiết lịch hẹn</h2>
+      </div>
+      <div style={{ background: '#fff', borderBottomLeftRadius: 14, borderBottomRightRadius: 14, boxShadow: '0 2px 12px #0001', padding: 32, marginBottom: 24 }}>
+        {loading ? (
+          <div>Đang tải...</div>
+        ) : error ? (
+          <div style={{ color: 'red' }}>{error}</div>
+        ) : appointment ? (
+          isAdmin ? (
+            <div style={{ fontSize: 16, marginBottom: 18 }}>
+              <div><b>Mã lịch hẹn:</b> {appointment.id}</div>
+              <div><b>Ngày hẹn:</b> {appointment.appointmentDate?.slice(0, 10)}</div>
+              <div><b>Loại xét nghiệm:</b> {appointment.testTypeName}</div>
+              <div><b>Trạng thái:</b> {appointment.status}</div>
+              <div><b>Ghi chú:</b> {appointment.notes || '-'}</div>
+              <div style={{ marginTop: 16, display: 'flex', gap: 12 }}>
+                {appointment.status === 'SCHEDULED' && (
+                  <button type="button" onClick={handleConfirm} disabled={confirming} style={{ background: '#388e3c', color: '#fff', padding: '10px 24px', borderRadius: 6, fontWeight: 600, fontSize: 16, border: 'none', cursor: 'pointer' }}>
+                    {confirming ? 'Đang xác nhận...' : 'Xác nhận lịch'}
+                  </button>
+                )}
+                <button type="button" onClick={handleDelete} disabled={deleting} style={{ background: '#d32f2f', color: '#fff', padding: '10px 24px', borderRadius: 6, fontWeight: 600, fontSize: 16, border: 'none', cursor: 'pointer' }}>
+                  {deleting ? 'Đang xóa...' : 'Xóa lịch hẹn'}
                 </button>
-              )}
-              <button type="button" onClick={handleDelete} disabled={deleting} style={{ background: '#d32f2f', color: '#fff', padding: '10px 24px', borderRadius: 6, fontWeight: 600, fontSize: 16, border: 'none', cursor: 'pointer' }}>
-                {deleting ? 'Đang xóa...' : 'Xóa lịch hẹn'}
-              </button>
+              </div>
+              {success && <div style={{ color: 'green', textAlign: 'center' }}>{success}</div>}
+              {error && <div style={{ color: 'red', textAlign: 'center' }}>{error}</div>}
             </div>
-            {success && <div style={{ color: 'green', textAlign: 'center' }}>{success}</div>}
-            {error && <div style={{ color: 'red', textAlign: 'center' }}>{error}</div>}
-          </div>
+          ) : (
+            <div style={{ fontSize: 16, marginBottom: 18 }}>
+              <div><b>Mã lịch hẹn:</b> {appointment.id}</div>
+              <div><b>Ngày hẹn:</b> {appointment.appointmentDate?.slice(0, 10)}</div>
+              <div><b>Loại xét nghiệm:</b> {appointment.testTypeName}</div>
+              <div><b>Trạng thái:</b> {appointment.status}</div>
+              <div><b>Ghi chú:</b> {appointment.notes || '-'}</div>
+            </div>
+          )
         ) : (
-          <div style={{ fontSize: 16, marginBottom: 18 }}>
-            <div><b>Mã lịch hẹn:</b> {appointment.id}</div>
-            <div><b>Ngày hẹn:</b> {appointment.appointmentDate?.slice(0, 10)}</div>
-            <div><b>Loại xét nghiệm:</b> {appointment.testTypeName}</div>
-            <div><b>Trạng thái:</b> {appointment.status}</div>
-            <div><b>Ghi chú:</b> {appointment.notes || '-'}</div>
-          </div>
-        )
-      ) : (
-        <div>Không tìm thấy lịch hẹn.</div>
-      )}
-      <a href="/appointments" style={{ color: '#1976d2', fontWeight: 600 }}>Quay lại danh sách</a>
+          <div>Không tìm thấy lịch hẹn.</div>
+        )}
+        <a href="/appointments" style={{ color: '#1976d2', fontWeight: 600 }}>Quay lại danh sách</a>
+      </div>
     </div>
   );
 };

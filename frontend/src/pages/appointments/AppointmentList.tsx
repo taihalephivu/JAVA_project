@@ -45,41 +45,45 @@ const AppointmentList: React.FC = () => {
   }, [isAdmin]);
 
   return (
-    <div style={{ maxWidth: 800, margin: '0 auto', background: '#fff', borderRadius: 12, boxShadow: '0 4px 24px #0001', padding: 32 }}>
-      <h2 style={{ color: '#1976d2', marginBottom: 16 }}>Danh sách lịch hẹn</h2>
-      {!isAdmin && (
-        <a href="/appointments/new" style={{ background: '#1976d2', color: '#fff', padding: '10px 20px', borderRadius: 6, textDecoration: 'none', fontWeight: 600, float: 'right', marginBottom: 16 }}>Đặt lịch mới</a>
-      )}
-      {loading ? (
-        <div>Đang tải...</div>
-      ) : error ? (
-        <div style={{ color: 'red' }}>{error}</div>
-      ) : appointments.length === 0 ? (
-        <div>Không có lịch hẹn nào.</div>
-      ) : (
-        <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: 24 }}>
-          <thead>
-            <tr style={{ background: '#f0f4fa' }}>
-              <th style={{ padding: 10 }}>Mã lịch hẹn</th>
-              <th style={{ padding: 10 }}>Ngày hẹn</th>
-              <th style={{ padding: 10 }}>Trạng thái</th>
-              <th style={{ padding: 10 }}>Thao tác</th>
-            </tr>
-          </thead>
-          <tbody>
-            {appointments.map(a => (
-              <tr key={a.id}>
-                <td style={{ padding: 10 }}>{a.id}</td>
-                <td style={{ padding: 10 }}>{a.appointmentDate?.slice(0, 10)}</td>
-                <td style={{ padding: 10 }}>{a.status}</td>
-                <td style={{ padding: 10 }}>
-                  <a href={isAdmin ? `/admin/appointments/${a.id}` : `/appointments/${a.id}`} style={{ color: '#1976d2', fontWeight: 600 }}>Xem chi tiết</a>
-                </td>
+    <div style={{ maxWidth: 800, margin: '0 auto', background: 'none', borderRadius: 14, padding: '0 0 32px 0' }}>
+      <div style={{ background: '#e3f0fd', borderTopLeftRadius: 14, borderTopRightRadius: 14, padding: '24px 32px 12px 32px', borderLeft: '6px solid #1976d2', boxShadow: '0 2px 12px #1976d211' }}>
+        <h2 style={{ color: '#1976d2', marginBottom: 0 }}>Danh sách lịch hẹn</h2>
+      </div>
+      <div style={{ background: '#fff', borderBottomLeftRadius: 14, borderBottomRightRadius: 14, boxShadow: '0 2px 12px #0001', padding: 32, marginBottom: 24 }}>
+        {!isAdmin && (
+          <a href="/appointments/new" style={{ background: '#1976d2', color: '#fff', padding: '10px 20px', borderRadius: 6, textDecoration: 'none', fontWeight: 600, float: 'right', marginBottom: 16 }}>Đặt lịch mới</a>
+        )}
+        {loading ? (
+          <div>Đang tải...</div>
+        ) : error ? (
+          <div style={{ color: 'red' }}>{error}</div>
+        ) : appointments.length === 0 ? (
+          <div>Không có lịch hẹn nào.</div>
+        ) : (
+          <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: 24 }}>
+            <thead>
+              <tr style={{ background: '#f0f4fa' }}>
+                <th style={{ padding: 10 }}>Mã lịch hẹn</th>
+                <th style={{ padding: 10 }}>Ngày hẹn</th>
+                <th style={{ padding: 10 }}>Trạng thái</th>
+                <th style={{ padding: 10 }}>Thao tác</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+            </thead>
+            <tbody>
+              {appointments.map(a => (
+                <tr key={a.id} style={{ borderLeft: '4px solid #1976d2', background: '#fafdff' }}>
+                  <td style={{ padding: 10 }}>{a.id}</td>
+                  <td style={{ padding: 10 }}>{a.appointmentDate?.slice(0, 10)}</td>
+                  <td style={{ padding: 10 }}>{a.status}</td>
+                  <td style={{ padding: 10 }}>
+                    <a href={isAdmin ? `/admin/appointments/${a.id}` : `/appointments/${a.id}`} style={{ color: '#1976d2', fontWeight: 600 }}>Xem chi tiết</a>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
     </div>
   );
 };
