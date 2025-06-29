@@ -1,6 +1,6 @@
 package adn_web.java_project.model;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity

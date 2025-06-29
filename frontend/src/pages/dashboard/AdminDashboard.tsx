@@ -11,6 +11,7 @@ const AdminDashboard: React.FC = () => (
       <a href="/users" style={{ background: '#1976d2', color: '#fff', padding: '14px 28px', borderRadius: 6, textDecoration: 'none', fontWeight: 600, minWidth: 180, textAlign: 'center' }}>Quản lý người dùng</a>
       <a href="/admin/posts" style={{ background: '#1976d2', color: '#fff', padding: '14px 28px', borderRadius: 6, textDecoration: 'none', fontWeight: 600, minWidth: 180, textAlign: 'center' }}>Quản lý bài viết</a>
       <a href="/admin/packages" style={{ background: '#1976d2', color: '#fff', padding: '14px 28px', borderRadius: 6, textDecoration: 'none', fontWeight: 600, minWidth: 180, textAlign: 'center' }}>Quản lý gói xét nghiệm</a>
+      <a href="/admin/reviews" style={{ background: '#1976d2', color: '#fff', padding: '14px 28px', borderRadius: 6, textDecoration: 'none', fontWeight: 600, minWidth: 180, textAlign: 'center' }}>⭐ Quản lý nhận xét</a>
     </div>
   </div>
 );

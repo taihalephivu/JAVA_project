@@ -24,6 +24,7 @@ import Profile from './pages/profile/Profile';
 import { User } from './types';
 import AdminPostManager from './pages/admin/AdminPostManager';
 import AdminPackageManager from './pages/admin/AdminPackageManager';
+import AdminReviewManager from './pages/admin/AdminReviewManager';
 
 // Helper để kiểm tra quyền
 const isAdmin = (user: User | null) => user && user.role === 'ROLE_ADMIN';
@@ -102,6 +103,7 @@ const App: React.FC = () => {
           <Route path="/users/:id" element={<AdminRoute><UserDetail /></AdminRoute>} />
           <Route path="/admin/posts" element={<AdminRoute><AdminPostManager /></AdminRoute>} />
           <Route path="/admin/packages" element={<AdminRoute><AdminPackageManager /></AdminRoute>} />
+          <Route path="/admin/reviews" element={<AdminRoute><AdminReviewManager /></AdminRoute>} />
           {/* Fallback */}
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
