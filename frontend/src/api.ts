@@ -89,4 +89,11 @@ export const updatePackage = (id: number, pkg: TestPackage) => api.put(`/package
 
 export const deletePackage = (id: number) => api.delete(`/packages/${id}`);
 
+// Reviews
+export const postReview = (data: { userName: string; rating: number; comment: string }) => api.post('/reviews', data);
+export const getApprovedReviews = () => api.get('/reviews?approved=true');
+export const getAllReviews = () => api.get('/reviews');
+export const approveReview = (id: number) => api.put(`/reviews/${id}/approve`);
+export const deleteReview = (id: number) => api.delete(`/reviews/${id}`);
+
 // Thêm các hàm gọi API khác ở đây 

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import { postReview } from '../api';
 
 const Footer: React.FC = () => {
   const location = useLocation();
@@ -11,14 +12,30 @@ const Footer: React.FC = () => {
   const [rating, setRating] = useState(0);
   const [hover, setHover] = useState(0);
   const [comment, setComment] = useState('');
+  const [userName, setUserName] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
-    setTimeout(() => setSubmitted(false), 2500);
-    setRating(0);
-    setComment('');
+    setLoading(true);
+    setError(null);
+    setSuccess(null);
+    try {
+      await postReview({ userName: userName.trim() || 'Ẩn danh', rating, comment });
+      setSuccess('Cảm ơn bạn đã đánh giá! Đánh giá sẽ được duyệt trước khi hiển thị.');
+      setSubmitted(true);
+      setRating(0);
+      setComment('');
+      setUserName('');
+      setTimeout(() => setSuccess(null), 3500);
+    } catch (err: any) {
+      setError('Gửi đánh giá thất bại. Vui lòng thử lại.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -29,6 +46,14 @@ const Footer: React.FC = () => {
           <div style={{ flex: 1, minWidth: 320, maxWidth: 400, background: '#fff', borderRadius: 12, boxShadow: '0 2px 12px #0001', padding: 24, marginBottom: 24 }}>
             <h3 style={{ color: '#1976d2', marginBottom: 10 }}>Đánh giá dịch vụ</h3>
             <form onSubmit={handleSubmit}>
+              <input
+                type="text"
+                placeholder="Tên của bạn (tuỳ chọn)"
+                value={userName}
+                onChange={e => setUserName(e.target.value)}
+                style={{ width: '100%', borderRadius: 8, border: '1px solid #bbb', padding: 10, marginBottom: 10, fontSize: 15 }}
+                maxLength={100}
+              />
               <div style={{ marginBottom: 10 }}>
                 {[1,2,3,4,5].map(star => (
                   <span
@@ -53,12 +78,13 @@ const Footer: React.FC = () => {
                 style={{ width: '100%', borderRadius: 8, border: '1px solid #bbb', padding: 10, minHeight: 48, marginBottom: 10, fontSize: 15 }}
                 maxLength={255}
               />
-              <button type="submit" style={{ background: '#1976d2', color: '#fff', border: 'none', borderRadius: 8, padding: '8px 22px', fontWeight: 600, fontSize: 15, cursor: 'pointer', boxShadow: '0 2px 8px #1976d211', transition: 'background 0.18s' }}
+              <button type="submit" style={{ background: '#1976d2', color: '#fff', border: 'none', borderRadius: 8, padding: '8px 22px', fontWeight: 600, fontSize: 15, cursor: loading ? 'not-allowed' : 'pointer', boxShadow: '0 2px 8px #1976d211', transition: 'background 0.18s', opacity: loading ? 0.7 : 1 }}
                 onMouseOver={e => (e.currentTarget.style.background = '#0d47a1')}
                 onMouseOut={e => (e.currentTarget.style.background = '#1976d2')}
-                disabled={rating === 0 || comment.trim() === ''}
-              >Gửi đánh giá</button>
-              {submitted && <div style={{ color: 'green', marginTop: 10 }}>Cảm ơn bạn đã đánh giá!</div>}
+                disabled={rating === 0 || comment.trim() === '' || loading}
+              >{loading ? 'Đang gửi...' : 'Gửi đánh giá'}</button>
+              {success && <div style={{ color: 'green', marginTop: 10 }}>{success}</div>}
+              {error && <div style={{ color: 'red', marginTop: 10 }}>{error}</div>}
             </form>
           </div>
           {/* Bản đồ chỉ dẫn */}

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getPosts, getPackages } from '../../api';
+import { getPosts, getPackages, getApprovedReviews } from '../../api';
 import { Post, Page, User, TestPackage } from '../../types';
 import { useNavigate } from 'react-router-dom';
 
@@ -23,39 +23,10 @@ const Home: React.FC = () => {
   const [errorPackages, setErrorPackages] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  // Dữ liệu đánh giá mẫu
-  const reviews = [
-    {
-      name: 'Nguyễn Văn A',
-      rating: 5,
-      comment: 'Dịch vụ rất chuyên nghiệp, kết quả nhanh và chính xác. Tôi rất hài lòng!',
-      date: '2024-05-01',
-    },
-    {
-      name: 'Trần Thị B',
-      rating: 4,
-      comment: 'Nhân viên tư vấn tận tình, thủ tục đơn giản. Sẽ giới thiệu cho bạn bè.',
-      date: '2024-05-03',
-    },
-    {
-      name: 'Lê Quốc C',
-      rating: 5,
-      comment: 'Trung tâm uy tín, bảo mật thông tin tốt. Tôi rất an tâm khi sử dụng dịch vụ.',
-      date: '2024-05-05',
-    },
-    {
-      name: 'Phạm Thị D',
-      rating: 5,
-      comment: 'Không gian sạch sẽ, hiện đại. Nhận kết quả đúng hẹn.',
-      date: '2024-05-07',
-    },
-    {
-      name: 'Vũ Minh E',
-      rating: 4,
-      comment: 'Giá cả hợp lý, chất lượng dịch vụ tốt.',
-      date: '2024-05-10',
-    },
-  ];
+  // Dữ liệu đánh giá từ backend
+  const [reviews, setReviews] = useState<any[]>([]);
+  const [loadingReviews, setLoadingReviews] = useState(true);
+  const [errorReviews, setErrorReviews] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -87,6 +58,22 @@ const Home: React.FC = () => {
       }
     };
     fetchPackages();
+  }, []);
+
+  useEffect(() => {
+    const fetchReviews = async () => {
+      setLoadingReviews(true);
+      setErrorReviews(null);
+      try {
+        const res = await getApprovedReviews();
+        setReviews(res.data as any[]);
+      } catch {
+        setErrorReviews('Không thể tải đánh giá khách hàng.');
+      } finally {
+        setLoadingReviews(false);
+      }
+    };
+    fetchReviews();
   }, []);
 
   const formatPrice = (price: number) => price.toLocaleString('vi-VN') + 'đ';
@@ -238,6 +225,8 @@ const Home: React.FC = () => {
       {/* Section đánh giá khách hàng */}
       <div style={{ borderTop: '1px solid #e3e3e3', paddingTop: 32, marginTop: 32, marginBottom: 16 }}>
         <h2 style={{ color: '#1976d2', marginBottom: 18, textAlign: 'center' }}>Khách hàng đã nói gì về ADN Center</h2>
+        {errorReviews && <div style={{ color: 'red', textAlign: 'center' }}>{errorReviews}</div>}
+        {loadingReviews ? <div style={{ color: '#1976d2', textAlign: 'center' }}>Đang tải đánh giá...</div> : (
         <div style={{
           width: '100%',
           overflow: 'hidden',
@@ -257,8 +246,8 @@ const Home: React.FC = () => {
             className="marquee-review"
           >
             {[...reviews, ...reviews].map((r, idx) => (
-              <div key={r.name + '-' + idx} style={{ background: '#fff', borderRadius: 14, boxShadow: '0 2px 12px #1976d211', padding: 20, minWidth: 320, maxWidth: 340, flex: '0 0 340px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', border: '1px solid #e3e3e3', margin: '8px 0', position: 'relative' }}>
-                <div style={{ fontSize: 18, fontWeight: 600, color: '#1976d2', marginBottom: 6 }}>{r.name}</div>
+              <div key={r.id + '-' + idx} style={{ background: '#fff', borderRadius: 14, boxShadow: '0 2px 12px #1976d211', padding: 20, minWidth: 320, maxWidth: 340, flex: '0 0 340px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', border: '1px solid #e3e3e3', margin: '8px 0', position: 'relative' }}>
+                <div style={{ fontSize: 18, fontWeight: 600, color: '#1976d2', marginBottom: 6 }}>{r.userName}</div>
                 <div style={{ color: '#FFD600', fontSize: 18, marginBottom: 4 }}>
                   {Array.from({ length: r.rating }).map((_, i) => <span key={i}>★</span>)}
                   {Array.from({ length: 5 - r.rating }).map((_, i) => <span key={i} style={{ color: '#bbb' }}>★</span>)}
@@ -266,7 +255,7 @@ const Home: React.FC = () => {
                 <div style={{ color: '#555', fontSize: 15, marginBottom: 8, fontStyle: 'italic' }}>
                   “{r.comment}”
                 </div>
-                <div style={{ color: '#888', fontSize: 13, marginTop: 'auto' }}>{new Date(r.date).toLocaleDateString('vi-VN')}</div>
+                <div style={{ color: '#888', fontSize: 13, marginTop: 'auto' }}>{new Date(r.createdAt).toLocaleDateString('vi-VN')}</div>
                 <span style={{ position: 'absolute', top: 12, right: 18, fontSize: 22, color: '#e3e3e3' }}>❝</span>
               </div>
             ))}
@@ -278,6 +267,7 @@ const Home: React.FC = () => {
             }
           `}</style>
         </div>
+        )}
       </div>
 
       { !user && (
