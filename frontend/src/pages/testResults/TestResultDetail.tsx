@@ -118,6 +118,7 @@ const TestResultDetail: React.FC = () => {
           <form onSubmit={handleSubmit} style={{ fontSize: 16, marginBottom: 18, display: 'flex', flexDirection: 'column', gap: 16 }}>
             <div><b>Mã kết quả:</b> {result.id}</div>
             <div><b>Mã xét nghiệm:</b> {result.test?.id}</div>
+            <div><b>Giá tiền:</b> {result.test?.totalAmount?.toLocaleString('vi-VN')}đ</div>
             <textarea name="resultData" placeholder="Kết quả" value={form.resultData} onChange={handleChange} required style={{ padding: 10, borderRadius: 6, border: '1px solid #bbb', minHeight: 60 }} />
             <textarea name="interpretation" placeholder="Diễn giải" value={form.interpretation} onChange={handleChange} style={{ padding: 10, borderRadius: 6, border: '1px solid #bbb', minHeight: 60 }} />
             <textarea name="recommendations" placeholder="Khuyến nghị" value={form.recommendations} onChange={handleChange} style={{ padding: 10, borderRadius: 6, border: '1px solid #bbb', minHeight: 60 }} />
@@ -135,6 +136,7 @@ const TestResultDetail: React.FC = () => {
             <div><b>Kết quả:</b> {result.resultData}</div>
             <div><b>Diễn giải:</b> {result.interpretation}</div>
             <div><b>Khuyến nghị:</b> {result.recommendations}</div>
+            <div><b>Giá tiền:</b> {result.test?.totalAmount?.toLocaleString('vi-VN')}đ</div>
             {result.test?.paymentStatus === 'PENDING' && (
               <button onClick={handlePayment} disabled={paying} style={{ background: '#1976d2', color: '#fff', padding: '10px 24px', borderRadius: 6, fontWeight: 600, fontSize: 16, border: 'none', cursor: 'pointer', marginTop: 16 }}>
                 {paying ? 'Đang thanh toán...' : 'Thanh toán'}
