@@ -23,6 +23,40 @@ const Home: React.FC = () => {
   const [errorPackages, setErrorPackages] = useState<string | null>(null);
   const navigate = useNavigate();
 
+  // Dữ liệu đánh giá mẫu
+  const reviews = [
+    {
+      name: 'Nguyễn Văn A',
+      rating: 5,
+      comment: 'Dịch vụ rất chuyên nghiệp, kết quả nhanh và chính xác. Tôi rất hài lòng!',
+      date: '2024-05-01',
+    },
+    {
+      name: 'Trần Thị B',
+      rating: 4,
+      comment: 'Nhân viên tư vấn tận tình, thủ tục đơn giản. Sẽ giới thiệu cho bạn bè.',
+      date: '2024-05-03',
+    },
+    {
+      name: 'Lê Quốc C',
+      rating: 5,
+      comment: 'Trung tâm uy tín, bảo mật thông tin tốt. Tôi rất an tâm khi sử dụng dịch vụ.',
+      date: '2024-05-05',
+    },
+    {
+      name: 'Phạm Thị D',
+      rating: 5,
+      comment: 'Không gian sạch sẽ, hiện đại. Nhận kết quả đúng hẹn.',
+      date: '2024-05-07',
+    },
+    {
+      name: 'Vũ Minh E',
+      rating: 4,
+      comment: 'Giá cả hợp lý, chất lượng dịch vụ tốt.',
+      date: '2024-05-10',
+    },
+  ];
+
   useEffect(() => {
     const fetchPosts = async () => {
       setLoading(true);
@@ -198,6 +232,51 @@ const Home: React.FC = () => {
         )}
         <div style={{ textAlign: 'center', marginTop: 24 }}>
           <a href="/posts" style={{ color: '#1976d2', fontWeight: 600 }}>Xem tất cả bài viết &rarr;</a>
+        </div>
+      </div>
+
+      {/* Section đánh giá khách hàng */}
+      <div style={{ borderTop: '1px solid #e3e3e3', paddingTop: 32, marginTop: 32, marginBottom: 16 }}>
+        <h2 style={{ color: '#1976d2', marginBottom: 18, textAlign: 'center' }}>Khách hàng đã nói gì về ADN Center</h2>
+        <div style={{
+          width: '100%',
+          overflow: 'hidden',
+          position: 'relative',
+          height: 170,
+          background: 'none',
+          margin: '0 auto',
+        }}>
+          <div
+            style={{
+              display: 'flex',
+              gap: 24,
+              alignItems: 'center',
+              animation: reviews.length > 0 ? 'marquee-review 32s linear infinite' : undefined,
+              width: reviews.length > 0 ? `${reviews.length * 340 * 2}px` : '100%',
+            }}
+            className="marquee-review"
+          >
+            {[...reviews, ...reviews].map((r, idx) => (
+              <div key={r.name + '-' + idx} style={{ background: '#fff', borderRadius: 14, boxShadow: '0 2px 12px #1976d211', padding: 20, minWidth: 320, maxWidth: 340, flex: '0 0 340px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', border: '1px solid #e3e3e3', margin: '8px 0', position: 'relative' }}>
+                <div style={{ fontSize: 18, fontWeight: 600, color: '#1976d2', marginBottom: 6 }}>{r.name}</div>
+                <div style={{ color: '#FFD600', fontSize: 18, marginBottom: 4 }}>
+                  {Array.from({ length: r.rating }).map((_, i) => <span key={i}>★</span>)}
+                  {Array.from({ length: 5 - r.rating }).map((_, i) => <span key={i} style={{ color: '#bbb' }}>★</span>)}
+                </div>
+                <div style={{ color: '#555', fontSize: 15, marginBottom: 8, fontStyle: 'italic' }}>
+                  “{r.comment}”
+                </div>
+                <div style={{ color: '#888', fontSize: 13, marginTop: 'auto' }}>{new Date(r.date).toLocaleDateString('vi-VN')}</div>
+                <span style={{ position: 'absolute', top: 12, right: 18, fontSize: 22, color: '#e3e3e3' }}>❝</span>
+              </div>
+            ))}
+          </div>
+          <style>{`
+            @keyframes marquee-review {
+              0% { transform: translateX(0); }
+              100% { transform: translateX(-50%); }
+            }
+          `}</style>
         </div>
       </div>
 
