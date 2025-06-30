@@ -108,6 +108,43 @@ const Footer: React.FC = () => {
           </div>
         </div>
       )}
+      {/* Thông tin thêm */}
+      {!isDashboard && (
+        <div style={{ background: '#f5f5f5', color: '#555', padding: '18px 32px 0 32px', textAlign: 'center', borderTop: '1px solid #eee', maxWidth: 1200, margin: '0 auto' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 40, marginBottom: 10 }}>
+            {/* Địa chỉ & giờ làm việc */}
+            <div style={{ minWidth: 220, flex: 1 }}>
+              <div style={{ fontWeight: 600, marginBottom: 6 }}>Địa chỉ</div>
+              <div>123 Đường Xét Nghiệm, Quận 1, TP.HCM</div>
+              <div style={{ fontWeight: 600, margin: '12px 0 6px 0' }}>Giờ làm việc</div>
+              <div>Thứ 2 - Thứ 7: 7:30 - 17:30</div>
+              <div>Chủ nhật: 8:00 - 12:00</div>
+            </div>
+            {/* Đường dẫn nhanh */}
+            <div style={{ minWidth: 180, flex: 1 }}>
+              <div style={{ fontWeight: 600, marginBottom: 6 }}>Đường dẫn nhanh</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 4, alignItems: 'flex-start', marginLeft: 16 }}>
+                <a href="/" style={{ color: '#1976d2', textDecoration: 'none' }}>Trang chủ</a>
+                <a href="/about" style={{ color: '#1976d2', textDecoration: 'none' }}>Giới thiệu</a>
+                <a href="/contact" style={{ color: '#1976d2', textDecoration: 'none' }}>Liên hệ</a>
+                <a href="/packages" style={{ color: '#1976d2', textDecoration: 'none' }}>Dịch vụ</a>
+              </div>
+            </div>
+            {/* Mạng xã hội */}
+            <div style={{ minWidth: 180, flex: 1 }}>
+              <div style={{ fontWeight: 600, marginBottom: 6 }}>Kết nối với chúng tôi</div>
+              <div style={{ display: 'flex', gap: 16, justifyContent: 'center', alignItems: 'center', fontSize: 24 }}>
+                <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook" style={{ color: '#1976d2' }}>
+                  <span style={{ fontSize: 28 }}>📘</span>
+                </a>
+                <a href="https://zalo.me" target="_blank" rel="noopener noreferrer" aria-label="Zalo" style={{ color: '#1976d2' }}>
+                  <span style={{ fontSize: 28 }}>💬</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       {/* Thông tin liên hệ */}
       <div style={{ background: '#f5f5f5', color: '#555', padding: '18px 32px', textAlign: 'center', borderTop: '1px solid #eee' }}>
         Trung tâm Xét nghiệm ADN &copy; {new Date().getFullYear()} | Hotline: 0123 456 789 | Email: info@dnacenter.vn
