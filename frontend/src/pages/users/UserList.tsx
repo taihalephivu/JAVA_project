@@ -58,7 +58,7 @@ const UserList: React.FC = () => {
                 <td style={{ padding: 10 }}>{u.fullName}</td>
                 <td style={{ padding: 10 }}>{u.email}</td>
                 <td style={{ padding: 10 }}>{u.role}</td>
-                <td style={{ padding: 10 }}><a href={`/users/${u.id}`} style={{ color: '#1976d2', fontWeight: 600 }}>Xem chi tiết</a></td>
+                <td style={{ padding: 10 }}><a href={`/admin/users/${u.id}`} style={{ color: '#1976d2', fontWeight: 600 }}>Xem chi tiết</a></td>
               </tr>
             ))}
           </tbody>

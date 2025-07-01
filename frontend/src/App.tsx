@@ -90,20 +90,21 @@ const App: React.FC = () => {
           <Route path="/test-results" element={<CustomerRoute><TestResultList /></CustomerRoute>} />
           <Route path="/test-results/:id" element={<CustomerRoute><TestResultDetail /></CustomerRoute>} />
           <Route path="/profile" element={<CustomerRoute><Profile /></CustomerRoute>} />
-          {/* Admin dashboard và các chức năng */}
-          <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
-          <Route path="/admin/appointments" element={<AdminRoute><AppointmentList /></AdminRoute>} />
-          <Route path="/admin/appointments/new" element={<AdminRoute><AppointmentForm /></AdminRoute>} />
-          <Route path="/admin/appointments/:id" element={<AdminRoute><AppointmentDetail /></AdminRoute>} />
-          <Route path="/admin/tests" element={<AdminRoute><TestList /></AdminRoute>} />
-          <Route path="/admin/tests/:id" element={<AdminRoute><TestDetail /></AdminRoute>} />
-          <Route path="/admin/test-results" element={<AdminRoute><TestResultList /></AdminRoute>} />
-          <Route path="/admin/test-results/:id" element={<AdminRoute><TestResultDetail /></AdminRoute>} />
-          <Route path="/users" element={<AdminRoute><UserList /></AdminRoute>} />
-          <Route path="/users/:id" element={<AdminRoute><UserDetail /></AdminRoute>} />
-          <Route path="/admin/posts" element={<AdminRoute><AdminPostManager /></AdminRoute>} />
-          <Route path="/admin/packages" element={<AdminRoute><AdminPackageManager /></AdminRoute>} />
-          <Route path="/admin/reviews" element={<AdminRoute><AdminReviewManager /></AdminRoute>} />
+          {/* Admin dashboard và các chức năng (dùng Outlet) */}
+          <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>}>
+            <Route path="appointments" element={<AppointmentList />} />
+            <Route path="appointments/new" element={<AppointmentForm />} />
+            <Route path="appointments/:id" element={<AppointmentDetail />} />
+            <Route path="tests" element={<TestList />} />
+            <Route path="tests/:id" element={<TestDetail />} />
+            <Route path="test-results" element={<TestResultList />} />
+            <Route path="test-results/:id" element={<TestResultDetail />} />
+            <Route path="posts" element={<AdminPostManager />} />
+            <Route path="packages" element={<AdminPackageManager />} />
+            <Route path="reviews" element={<AdminReviewManager />} />
+            <Route path="users" element={<UserList />} />
+            <Route path="users/:id" element={<UserDetail />} />
+          </Route>
           {/* Fallback */}
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
