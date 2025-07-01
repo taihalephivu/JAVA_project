@@ -45,7 +45,13 @@ const AppointmentList: React.FC = () => {
   }, [isAdmin]);
 
   return (
-    <div style={{ maxWidth: 800, margin: '0 auto', background: 'none', borderRadius: 14, padding: '0 0 32px 0' }}>
+    <div style={{ maxWidth: 800, margin: '0 auto', background: 'none', borderRadius: 14, padding: '0 0 32px 0', position: 'relative' }}>
+      <button
+        onClick={() => window.history.back()}
+        style={{ position: 'absolute', left: 24, top: 24, background: 'none', color: '#1976d2', border: 'none', fontWeight: 600, fontSize: 15, cursor: 'pointer', zIndex: 10, padding: 0, transition: 'color 0.18s', textDecoration: 'underline' }}
+        onMouseOver={e => { e.currentTarget.style.color = '#0d47a1'; }}
+        onMouseOut={e => { e.currentTarget.style.color = '#1976d2'; }}
+      >Trở về</button>
       <div style={{ background: '#e3f0fd', borderTopLeftRadius: 14, borderTopRightRadius: 14, padding: '24px 32px 12px 32px', borderLeft: '6px solid #1976d2', boxShadow: '0 2px 12px #1976d211' }}>
         <h2 style={{ color: '#1976d2', marginBottom: 0 }}>Danh sách lịch hẹn</h2>
       </div>
@@ -74,7 +80,28 @@ const AppointmentList: React.FC = () => {
                 <tr key={a.id} style={{ borderLeft: '4px solid #1976d2', background: '#fafdff' }}>
                   <td style={{ padding: 10 }}>{a.id}</td>
                   <td style={{ padding: 10 }}>{a.appointmentDate?.slice(0, 10)}</td>
-                  <td style={{ padding: 10 }}>{a.status}</td>
+                  <td style={{ padding: 10 }}>
+                    <span style={{
+                      display: 'inline-block',
+                      fontWeight: 600,
+                      borderRadius: 6,
+                      padding: '4px 12px',
+                      color: '#fff',
+                      background: a.status === 'SCHEDULED' ? '#1976d2'
+                        : a.status === 'CONFIRMED' ? '#388e3c'
+                        : a.status === 'COMPLETED' ? '#4caf50'
+                        : a.status === 'CANCELLED' ? '#d32f2f'
+                        : a.status === 'NO_SHOW' ? '#ff9800'
+                        : '#888',
+                      fontSize: 14
+                    }}>{a.status === 'SCHEDULED' ? 'Đã lên lịch'
+                      : a.status === 'CONFIRMED' ? 'Đã xác nhận'
+                      : a.status === 'COMPLETED' ? 'Đã hoàn thành'
+                      : a.status === 'CANCELLED' ? 'Đã hủy'
+                      : a.status === 'NO_SHOW' ? 'Không đến'
+                      : a.status}
+                    </span>
+                  </td>
                   <td style={{ padding: 10 }}>
                     <a href={isAdmin ? `/admin/appointments/${a.id}` : `/appointments/${a.id}`} style={{ color: '#1976d2', fontWeight: 600 }}>Xem chi tiết</a>
                   </td>

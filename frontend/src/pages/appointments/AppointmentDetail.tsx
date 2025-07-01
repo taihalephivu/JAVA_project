@@ -121,7 +121,7 @@ const AppointmentDetail: React.FC = () => {
   };
 
   return (
-    <div style={{ maxWidth: 600, margin: '0 auto', background: 'none', borderRadius: 14, padding: '0 0 32px 0' }}>
+    <div style={{ maxWidth: 600, margin: '0 auto', background: 'none', borderRadius: 14, padding: '0 0 32px 0', position: 'relative' }}>
       <div style={{ background: '#e3f0fd', borderTopLeftRadius: 14, borderTopRightRadius: 14, padding: '24px 32px 12px 32px', borderLeft: '6px solid #1976d2', boxShadow: '0 2px 12px #1976d211' }}>
         <h2 style={{ color: '#1976d2', marginBottom: 0 }}>Chi tiết lịch hẹn</h2>
       </div>

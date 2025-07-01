@@ -24,7 +24,13 @@ const UserList: React.FC = () => {
   }, []);
 
   return (
-    <div style={{ maxWidth: 800, margin: '0 auto', background: '#fff', borderRadius: 12, boxShadow: '0 4px 24px #0001', padding: 32 }}>
+    <div style={{ maxWidth: 800, margin: '0 auto', background: '#fff', borderRadius: 12, boxShadow: '0 4px 24px #0001', padding: 32, position: 'relative' }}>
+      <button
+        onClick={() => window.history.back()}
+        style={{ position: 'absolute', left: 24, top: 24, background: 'none', color: '#1976d2', border: 'none', fontWeight: 600, fontSize: 15, cursor: 'pointer', zIndex: 10, padding: 0, transition: 'color 0.18s', textDecoration: 'underline' }}
+        onMouseOver={e => { e.currentTarget.style.color = '#0d47a1'; }}
+        onMouseOut={e => { e.currentTarget.style.color = '#1976d2'; }}
+      >Trở về</button>
       <h2 style={{ color: '#1976d2', marginBottom: 16 }}>Danh sách người dùng</h2>
       {loading ? (
         <div>Đang tải...</div>

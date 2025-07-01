@@ -44,7 +44,13 @@ const TestList: React.FC = () => {
   }, [isAdmin]);
 
   return (
-    <div style={{ maxWidth: 800, margin: '0 auto', background: '#fff', borderRadius: 12, boxShadow: '0 4px 24px #0001', padding: 32 }}>
+    <div style={{ maxWidth: 800, margin: '0 auto', background: '#fff', borderRadius: 12, boxShadow: '0 4px 24px #0001', padding: 32, position: 'relative' }}>
+      <button
+        onClick={() => window.history.back()}
+        style={{ position: 'absolute', left: 24, top: 24, background: 'none', color: '#1976d2', border: 'none', fontWeight: 600, fontSize: 15, cursor: 'pointer', zIndex: 10, padding: 0, transition: 'color 0.18s', textDecoration: 'underline' }}
+        onMouseOver={e => { e.currentTarget.style.color = '#0d47a1'; }}
+        onMouseOut={e => { e.currentTarget.style.color = '#1976d2'; }}
+      >Trở về</button>
       <h2 style={{ color: '#1976d2', marginBottom: 16 }}>Danh sách xét nghiệm</h2>
       {loading ? (
         <div>Đang tải...</div>
@@ -67,7 +73,30 @@ const TestList: React.FC = () => {
               <tr key={t.id}>
                 <td style={{ padding: 10 }}>{t.id}</td>
                 <td style={{ padding: 10 }}>{t.sampleCode}</td>
-                <td style={{ padding: 10 }}>{t.status}</td>
+                <td style={{ padding: 10 }}>
+                  <span style={{
+                    display: 'inline-block',
+                    fontWeight: 600,
+                    borderRadius: 6,
+                    padding: '4px 12px',
+                    color: '#fff',
+                    background: t.status === 'PENDING' ? '#1976d2'
+                      : t.status === 'SAMPLE_COLLECTED' ? '#0288d1'
+                      : t.status === 'IN_PROGRESS' ? '#ff9800'
+                      : t.status === 'COMPLETED' ? '#4caf50'
+                      : t.status === 'CANCELLED' ? '#d32f2f'
+                      : t.status === 'FAILED' ? '#757575'
+                      : '#888',
+                    fontSize: 14
+                  }}>{t.status === 'PENDING' ? 'Chờ xử lý'
+                    : t.status === 'SAMPLE_COLLECTED' ? 'Đã thu mẫu'
+                    : t.status === 'IN_PROGRESS' ? 'Đang xử lý'
+                    : t.status === 'COMPLETED' ? 'Hoàn thành'
+                    : t.status === 'CANCELLED' ? 'Đã hủy'
+                    : t.status === 'FAILED' ? 'Thất bại'
+                    : t.status}
+                  </span>
+                </td>
                 <td style={{ padding: 10 }}>
                   <a href={isAdmin ? `/admin/tests/${t.id}` : `/tests/${t.id}`} style={{ color: '#1976d2', fontWeight: 600 }}>Xem chi tiết</a>
                 </td>

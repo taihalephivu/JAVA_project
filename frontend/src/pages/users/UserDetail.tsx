@@ -70,7 +70,7 @@ const UserDetail: React.FC = () => {
   };
 
   return (
-    <div style={{ maxWidth: 600, margin: '0 auto', background: '#fff', borderRadius: 12, boxShadow: '0 4px 24px #0001', padding: 32 }}>
+    <div style={{ maxWidth: 600, margin: '0 auto', background: '#fff', borderRadius: 12, boxShadow: '0 4px 24px #0001', padding: 32, position: 'relative' }}>
       <h2 style={{ color: '#1976d2', marginBottom: 16 }}>Chi tiết người dùng</h2>
       {loading ? (
         <div>Đang tải...</div>
